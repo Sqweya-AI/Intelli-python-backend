@@ -16,7 +16,7 @@ load_dotenv()
 app = FastAPI()
 
 llm_client = LlmClient()
-twilio_client = TwilioClient()
+# twilio_client = TwilioClient() #Uncomment to use twilio client
 
 # twilio_client.create_phone_number(213, os.environ['RETELL_AGENT_ID'])
 # twilio_client.delete_phone_number("+12133548310")
