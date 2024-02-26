@@ -1,4 +1,4 @@
-# Sqweya AI Python Backend Demo
+# Sqweya AI Python Backend
 
 Welcome to the Python backend repository for Sqweya AI. This demo showcases how we plan to integrate our Large Language Model (LLM) with Retell, an AI Conversational API platform.
 
