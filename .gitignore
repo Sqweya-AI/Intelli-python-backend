@@ -396,3 +396,74 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual Environment
+myenv/
+.myenv
+*.env
+.env
+.env.local
+
+# Django
+*.log
+*.pot
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+
+# VS Code
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE files
+.idea/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# Caches
+.caches/
+
+# Django staticfiles
+staticfiles/
+
+# Database
+db.sqlite3
+
+# PyCharm files
+*.iml
+.idea/
+*.sorl-thumbnail/
+
+# Compiled files
+*.so
+*.class
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.opendb
+*.idb
+*.exp
+*.lib
+*.pch
+*.sbr
+*.a
+*.lo
+*.o
+*.bundle
+*.rbc
+*.rb~
+*.os
+*.obj
+*.dockerfile
