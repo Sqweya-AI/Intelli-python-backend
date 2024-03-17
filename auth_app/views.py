@@ -1,21 +1,17 @@
 # users/views.py
-from datetime import timedelta
-from django.http import JsonResponse
+from .utils import send_reset_password_email, send_verification_email
+from rest_framework.authentication import SessionAuthentication
+from django.contrib.auth import authenticate, login, logout
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from .models import User
 from .serializers import UserSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication
-from .utils import send_reset_password_email, send_verification_email
-import uuid
 from django.utils import timezone
-
+from datetime import timedelta
+from .models import User
+import uuid
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -85,6 +81,14 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'access_token': str(refresh.access_token), 'refresh_token': str(refresh)})
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
+    # LOGOUT
+    @action(detail=False, methods=['post'])
+    def logout(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        logout(request)
+        return Response({'message': 'User logged out successfully.'}, status=status.HTTP_200_OK)
+    
     # FORGOT PASSWORD
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def forgot_password(self, request):
@@ -127,7 +131,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'error': 'Invalid or expired reset token.', "Reality":"USED"}, status=status.HTTP_400_BAD_REQUEST) 
 
     # CHANGE PASSWORD
-    @csrf_exempt
     @action(detail=False, methods=['post'])
     def change_password(self, request):
         # Check if user is logged in
@@ -144,7 +147,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'error': 'Invalid old password.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # DASHBOARD
-    @csrf_exempt
     @action(detail=False, methods=['get'])
     def dashboard(self, request):
         if not request.user.is_authenticated:
@@ -155,7 +157,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'message': 'You do not have permission to access the dashboard'}, status=403)
     
     # PROFILE
-    @csrf_exempt
     @action(detail=False, methods=['get'])
     def profile(self, request):
         # Check if user is logged in
@@ -176,7 +177,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
     # REFRESH TOKEN
-    @csrf_exempt
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def refresh_token(self, request):
         refresh_token = request.data.get('refresh_token')
@@ -188,3 +188,5 @@ class UserViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
