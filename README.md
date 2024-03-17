@@ -1,3 +1,56 @@
+1-AUTH:
+
+REGISTER
+http://localhost:8000/auth/register/
+
+VERIFY EMAIL
+http://localhost:8000/auth/verify_email/
+
+LOGIN
+http://localhost:8000/auth/login/
+
+CHANGE PASSWORD
+http://localhost:8000/auth/change_password/
+
+FORGOT PASSWORD - Request a link
+http://localhost:8000/auth/forgot_password/
+
+RESET PASSWORD
+http://localhost:8000/auth/reset_password/
+
+SEE REGISTERED USERS
+http://localhost:8000/auth
+
+PROFILE (LOGGED IN USER)
+http://localhost:8000/auth/profile
+
+DASHBOARD (MANAGERS)
+http://localhost:8000/auth/dashboard
+
+RESERVATION (ALL STAFF)
+http://localhost:8000/auth/reservations
+
+
+
+2-CHAT: (testing the prompting)
+
+chitchat
+http://localhost:8000/chat/
+
+analysis
+http://localhost:8000/chat/analyse
+
+# RETELL AI'S README BELOW
+
+
+
+
+
+
+
+
+
+
 # Sqweya AI Python Backend
 
 Welcome to the Python backend repository for Sqweya AI. This demo showcases how we plan to integrate our Large Language Model (LLM) with Retell, an AI Conversational API platform.
