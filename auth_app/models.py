@@ -7,11 +7,11 @@ import uuid
 USER_ROLES = (
     ('manager', 'Hotel Manager'),
     ('customer_service', 'Customer Service'),
-    ('customer', 'Customer'),
+    ('customer_service_supervisor', 'Customer Service Supervisor'),
 )
 
 class User(AbstractUser):
-    role = models.CharField(max_length=20, choices=USER_ROLES, blank=False, null=False)
+    role = models.CharField(max_length=30, choices=USER_ROLES, blank=False, null=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     password = models.CharField(max_length=100, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
