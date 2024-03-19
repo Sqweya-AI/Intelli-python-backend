@@ -30,7 +30,6 @@ DATABASES = {
     }
 }
 
-
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -52,7 +51,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'auth_app',
-    'bot_app'  
+    'bot_app',
+    'dashboard_app',
 ]
 
 MIDDLEWARE = [
@@ -111,15 +111,53 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # STORE
 # REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    
+# }
+
+# REST_FRAME = {
+#     # ... other settings
+#     'DEFAULT_RENDERER_CLASSES': [
+#         'rest_framework.renderers.JSONRenderer',
+#     ],
+#     'DEFAULT_PARSER_CLASSES': [
+#         'rest_framework.parsers.JSONParser',
 #     ],
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.IsAuthenticated',
 #     ],
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#     ],
+#     'EXCEPTION_HANDLER': 'yourapp.exception_handler.custom_exception_handler',  # Optional: Custom exception handler (replace 'yourapp' with your app name)
 # }
+
 
 # emailing/ no env variables yet
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -128,6 +166,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'saadatsamjo@gmail.com'
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
+
+# # Custom mySQL 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'chatbotappDB',
+#         'USER': 'root',
+#         'PASSWORD': DB_PASSWORD,
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
 
 
 # DATABASES = {

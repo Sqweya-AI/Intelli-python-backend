@@ -34,14 +34,14 @@ def chat(request):
         response = openai.chat.completions.create(
             model=LLM_model,
             messages=[
-                {"role": "system", "content": "You are hotel's customer service worker. You are receiving enquiries from customers and handling them. The name of the hotel you are working for is Hunters Royal Hotel . Use the data you are already aware of relating to the Hunters Royal Hotel, located in Ghana. Your response should be in the same language the client has contacted the hotel in (e.g if a customer speaks to you in swahili, reply in swahili, english for english .etc)"},
+                {"role": "system", "content": "You are hotel's customer service worker. You are receiving enquiries from customers and handling them. The name of the hotel you are working for is Hunters Royal Hotel . Use the data you are already aware of relating to the Hunters Royal Hotel, located in Ghana. Your response should be in the same language the client has contacted the hotel in (e.g if a customer speaks to you in swahili, reply in swahili, english for english .etc)."},
                 {"role": "user", "content": user_input},
             ],
             max_tokens=256,
             temperature=0.5
         )
         return Response({
-            "request": "Fun chat",
+            "request": "Enquiry Request",
             "input": user_input,
             "response": response.choices[0].message.content
             })
@@ -76,7 +76,7 @@ def translate(request):
             temperature=0.5
         )
         return Response({
-            "request": "translate",
+            "request": "Translate Request",
             "input": user_input,
             "response": response.choices[0].message.content
         })
@@ -113,7 +113,7 @@ class AnalyseView(APIView):
                 serializer.save(user_input=user_input, analysis_response=analysis_response)
                 
                 return Response({
-                    "request": "analyse",
+                    "request": "Analyse Request",
                     "input": user_input,
                     "response": analysis_response,
                     "analysis_id": serializer.instance.id  # Including the ID
@@ -125,54 +125,3 @@ class AnalyseView(APIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
-
-# old translate view/ nod db saving
-# #analyse view
-# @api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([]) 
-# def analyse(request):
-#     """
-#     Handle analysis requests.
-
-#     Parameters:
-#     - user_input: The user's input for analysis.
-
-#     Returns:
-#     - Response containing the analysis request details and response.
-#     """
-#     user_input = request.data.get('user_input')
-#     try:
-#         response = openai.chat.completions.create(
-#             model=LLM_model,
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": "You are a helpful assistant. Analyse the prompt you receive and provide what conclusion you draw, as to what is the 1.Mood and 2.Feeling of the user who provided the input/query"
-#                 },
-
-#                 {
-#                     "role": "user",
-#                     "content": user_input
-#                 },
-#             ],
-#             max_tokens=256,
-#             temperature=0.5
-#         )
-#         return Response({
-#             "request": "analyse",
-#             "input": user_input,
-#             "response": response.choices[0].message.content
-#         })
-#     except Exception as e:
-#         return Response({
-#             "error": str(e)
-#         }, status=500)

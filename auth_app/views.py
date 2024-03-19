@@ -23,6 +23,14 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     authentication_classes = [CsrfExemptSessionAuthentication]  # Bypass csrf check for login and register actions
 
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True) 
+        return Response({"Content":"Registered users- Managers/Agents", "The list":serializer.data}, status=status.HTTP_200_OK)
+    
+
     #permission_classes = [IsAuthenticated]
     # authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for all actions
 
@@ -32,7 +40,9 @@ class UserViewSet(viewsets.ModelViewSet):
         email = request.data.get("email")
         role = request.data.get("role")
         password = request.data.get("password")
-        email_verification_token = uuid.uuid4().hex  # Generate a verification token
+        if not email or not role or not password:
+            return Response({'error': 'Email, role and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        email_verification_token = uuid.uuid4()
 
         if User.objects.filter(email=email).exists():
             return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,7 +111,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.reset_token_expiry = token_expiry
             user.save()
             send_reset_password_email(user.email, str(reset_token))  # Convert UUID to string for sending in the email
-            return Response({'message': f'Reset link has been sent to your email.', "link": f'http://localhost:8000/auth/forgot_password/{str(reset_token)}'})
+            return Response({'message': f'Reset link has been sent to your email.', "link": f'http://localhost:8000/auth/reset_password/{str(reset_token)}'})
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     
 
@@ -146,15 +156,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid old password.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # DASHBOARD
-    @action(detail=False, methods=['get'])
-    def dashboard(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        if user.role == 'manager':
-            return Response({'message': 'Dashboard data for  hotel manager ONLY'})
-        return Response({'message': 'You do not have permission to access the dashboard'}, status=403)
+
     
     # PROFILE
     @action(detail=False, methods=['get'])
@@ -166,15 +168,6 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    # RESERVATIONS
-    @action(detail=False, methods=['get'])
-    def reservations(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        if user.role in ['manager', 'customer_service']:
-            return Response({'message': 'Reservations data for BOTH manager & customer service'})
-        return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
     # REFRESH TOKEN
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
