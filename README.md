@@ -1,37 +1,51 @@
 1-AUTH:
 
-REGISTER
-http://localhost:8000/auth/register/
+# ================REGISTER=====================
+http://localhost:8000/auth/register/ (POST)
 
 VERIFY EMAIL
-http://localhost:8000/auth/verify_email/
+http://localhost:8000/auth/verify_email/ (POST)
 
 LOGIN
-http://localhost:8000/auth/login/
+http://localhost:8000/auth/login/ (POST)
 
 CHANGE PASSWORD
-http://localhost:8000/auth/change_password/
+http://localhost:8000/auth/change_password/ (POST)
 
 FORGOT PASSWORD - Request a link
-http://localhost:8000/auth/forgot_password/
+http://localhost:8000/auth/forgot_password/ (POST)
 
 RESET PASSWORD
-http://localhost:8000/auth/reset_password/
+http://localhost:8000/auth/reset_password/ (POST)
 
 SEE REGISTERED USERS
-http://localhost:8000/auth
+http://localhost:8000/auth (GET)
 
 PROFILE (LOGGED IN USER)
-http://localhost:8000/auth/profile
-
-DASHBOARD (MANAGERS)
-http://localhost:8000/auth/dashboard
-
-RESERVATION (ALL STAFF)
-http://localhost:8000/auth/reservations
+http://localhost:8000/auth/profile (GET)
 
 
+# ===============DASHBOARD=====================
+RESERVATIONS
+http://localhost:8000/dashboard/reservations
 
+BILLING
+http://localhost:8000/dashboard/
+
+AGENTS LIST
+http://localhost:8000/dashboard/
+
+SETTINGS 
+-current settings
+http://localhost:8000/dashboard/setting (GET)
+
+SETTINGS 
+-update settings
+http://localhost:8000/dashboard/setting (PUT)
+
+
+
+# =============CHAT=================
 2-CHAT: (testing the prompting)
 
 chitchat
@@ -39,6 +53,14 @@ http://localhost:8000/chat/
 
 analysis
 http://localhost:8000/chat/analyse
+
+
+
+
+
+
+
+
 
 # RETELL AI'S README BELOW
 
