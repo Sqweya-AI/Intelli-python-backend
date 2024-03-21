@@ -8,13 +8,22 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
+DB_USER = os.getenv('DB_USER')
+DB_NAME = os.getenv('DB_NAME')
+PORT = os.getenv('PORT')
+HOST = os.getenv('HOST')
+ENGINE = os.getenv('ENGINE')
 
-
+#DATABASES
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': ENGINE,
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD' : DB_PASSWORD,
+        'HOST': HOST,
+        'PORT': PORT
     }
 }
 
@@ -38,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'main_app',
     'auth_app',
     'bot_app',
     'dashboard_app',
@@ -154,6 +164,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'saadatsamjo@gmail.com'
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
+
+
+# #DEFAULT DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # # Custom mySQL 
 # DATABASES = {
