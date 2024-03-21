@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'main_app',
     'auth_app',
     'bot_app',
     'dashboard_app',
@@ -166,6 +167,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'saadatsamjo@gmail.com'
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
+
+
+# #DEFAULT DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # # Custom mySQL 
 # DATABASES = {
