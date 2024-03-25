@@ -16,7 +16,7 @@ import uuid
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return  # SKIP CSRF check
-    
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -26,14 +26,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def list(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.role == 'manager':
+            return Response({'error': 'Only Managers can access this resource'}, status=status.HTTP_403_FORBIDDEN)
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True) 
         return Response({"Content":"Registered users- Managers/Agents", "The list":serializer.data}, status=status.HTTP_200_OK)
     
-
-    #permission_classes = [IsAuthenticated]
-    # authentication_classes = [JWTAuthentication]  # Use JWTAuthentication for all actions
-
     # REGISTER
     @action(detail=False, methods=['post'])
     def register(self, request):
@@ -113,7 +111,6 @@ class UserViewSet(viewsets.ModelViewSet):
             send_reset_password_email(user.email, str(reset_token))  # Convert UUID to string for sending in the email
             return Response({'message': f'Reset link has been sent to your email.', "link": f'http://localhost:8000/auth/reset_password/{str(reset_token)}'})
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-    
 
     #RESET PASSWORD
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
@@ -156,8 +153,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid old password.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-    
     # PROFILE
     @action(detail=False, methods=['get'])
     def profile(self, request):
@@ -166,9 +161,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response({"My profile": serializer.data, "email verified?":"VERIFIED!" if user.is_email_verified else "NOT VERIFIED YET"}, status=status.HTTP_200_OK)
 
-    
     # REFRESH TOKEN
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def refresh_token(self, request):
@@ -181,5 +175,3 @@ class UserViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
-    
-

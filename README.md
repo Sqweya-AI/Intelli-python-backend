@@ -1,6 +1,6 @@
-1-AUTH:
 
-# ================REGISTER=====================
+# ================1-AUTH:=====================
+REGISTER
 http://localhost:8000/auth/register/ (POST)
 
 VERIFY EMAIL
@@ -26,32 +26,41 @@ http://localhost:8000/auth/profile (GET)
 
 
 # ===============DASHBOARD=====================
+
+OVERVIEW
+-returns different dashboard depending on the role of the user
+http://localhost:8000/dashboard/overview
+
 RESERVATIONS
 http://localhost:8000/dashboard/reservations
 
 BILLING
+-accessible to managers only
 http://localhost:8000/dashboard/
 
-AGENTS LIST
+AGENTS LIST-
+-Lists the registered c-service agents for now (excluding managers)
 http://localhost:8000/dashboard/
 
 SETTINGS 
 -current settings
 http://localhost:8000/dashboard/setting (GET)
 
-SETTINGS 
 -update settings
 http://localhost:8000/dashboard/setting (PUT)
 
 
 
 # =============CHAT=================
-2-CHAT: (testing the prompting)
+CHAT: (testing the prompting)
 
-chitchat
+CHIT-CHAT
 http://localhost:8000/chat/
 
-analysis
+ANALYSIS
+http://localhost:8000/chat/analyse
+
+TRANSLATING
 http://localhost:8000/chat/analyse
 
 
