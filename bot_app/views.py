@@ -123,5 +123,4 @@ class AnalyseView(APIView):
                 return Response({
                     "error": f"Error during analysis: {str(e)}"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

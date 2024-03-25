@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'auth_app',
     'bot_app',
     'dashboard_app',
+    'billing_app',
 ]
 
 MIDDLEWARE = [
