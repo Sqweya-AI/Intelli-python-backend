@@ -7,29 +7,62 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
 DEBUG = os.getenv('DEBUG')
-DB_USER = os.getenv('DB_USER')
-DB_NAME = os.getenv('DB_NAME')
-PORT = os.getenv('PORT')
-HOST = os.getenv('HOST')
-ENGINE = os.getenv('ENGINE')
 
-#DATABASES
+#MYSQL
+DB_ENGINE = os.getenv('DB_ENGINE')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+
+#POSTGRES
+POSTGRES_DB_ENGINE = os.getenv('POSTGRES_DB_ENGINE')
+POSTGRES_DB_USER = os.getenv('POSTGRES_DB_USER')
+POSTGRES_DB_PASSWORD = os.getenv('POSTGRES_DB_PASSWORD')
+POSTGRES_DB_NAME = os.getenv('POSTGRES_DB_NAME')
+POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
+POSTGRES_DB_HOST = os.getenv('POSTGRES_DB_HOST')
+POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
+
+
+# POSTGRES_USER=POSTGRES_DB_USER
+# POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
+# POSTGRES_DB=POSTGRES_DB_NAME
+
+
+# # DATABASES
+
+# #postgres-docker-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DOCKER_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
+
+#postgres-local-db
 DATABASES = {
     'default': {
-        'ENGINE': ENGINE,
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD' : DB_PASSWORD,
-        'HOST': HOST,
-        'PORT': PORT
+        'ENGINE': POSTGRES_DB_ENGINE,
+        'NAME': POSTGRES_DB_NAME,
+        'USER': POSTGRES_DB_USER,
+        'PASSWORD' : POSTGRES_DB_PASSWORD,
+        'HOST': POSTGRES_DB_HOST, 
+        'PORT': POSTGRES_DB_PORT
     }
 }
+
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '0.0.0.0'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -192,9 +225,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'chatbotappDB',
+#         'NAME': 'IntelliPostgresDB',
 #         'USER':'postgres',
-#         'PASSWORD' : '1111',
+#         'PASSWORD' : 'abcd',
 #         'HOST':'localhost',
 #         'PORT': 5432
 #     }

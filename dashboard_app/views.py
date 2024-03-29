@@ -40,9 +40,9 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # OVERVIEW
     @action(detail=False, methods=['get'])
     def overview(self, request):
-        isVerified = request.user.is_email_verified
         if not request.user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        isVerified = request.user.is_email_verified
         if request.user.role == 'manager':
             serializer = UserSerializer(request.user)
             return Response({'content': 'HOTEL MANAGER\'S Dashboard', "User Role": serializer.data['role'], "Company email verificado?": "warning OFF (Verified)" if isVerified else "Warning! Not Verified"},status=status.HTTP_200_OK)
