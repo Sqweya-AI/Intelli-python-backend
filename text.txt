@@ -1,5 +1,51 @@
-accounts/views.py
-dashboard/views.py:
-channels/views.py
-settings/views.py
-billings/views.py
+//--no compose
+docker build --tag python-django .
+docker run --publish 8000:8000 python-django
+
+//---
+docker-compose build
+docker-compose run --rm app django-admin startproject core.
+docker-compose up
+
+docker-compose down
+docker-compose up --build
+
+
+
+
+
+#rebuilding the images?
+# Build the new Docker image
+docker build -t intelli_backend_image:latest .
+
+# Tag the new Docker image
+docker tag intelli_backend_image:latest intelliappregistry.azurecr.io/intelli_backend_app:latest
+
+# Push the new Docker image to the container registry
+docker push intelliappregistry.azurecr.io/intelli_backend_app:latest
+
+
+
+#deploying pipeline??
+# Log in to Azure CLI (if not already logged in)
+az login
+
+# Set the subscription where your Azure Container Registry and Container Instances are located
+az account set --subscription <subscription-id>
+
+# Pull the latest Docker image from the Azure Container Registry
+docker pull intelliappregistry.azurecr.io/intelli_backend_app:latest
+
+# Stop the existing container instances
+az container stop --name <container-instance-name> --resource-group <resource-group-name>
+
+# Start new container instances with the updated Docker image
+az container create --name <new-container-instance-name> --resource-group <resource-group-name> --image intelliappregistry.azurecr.io/intelli_backend_app:latest --ip-address public --ports 8000
+
+
+
+
+#after setting subscription
+az acr login --name intelliappregistry
+docker tag intelli_backend_image:latest intelliappregistry.azurecr.io/intelli_backend_app:latest
+docker push intelliappregistry.azurecr.io/intelli_backend_app:latest

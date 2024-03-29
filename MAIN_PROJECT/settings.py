@@ -30,9 +30,11 @@ DATABASES = {
     }
 }
 
+
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '0.0.0.0'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -195,9 +197,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'chatbotappDB',
+#         'NAME': 'IntelliPostgresDB',
 #         'USER':'postgres',
-#         'PASSWORD' : '1111',
+#         'PASSWORD' : 'abcd',
 #         'HOST':'localhost',
 #         'PORT': 5432
 #     }
