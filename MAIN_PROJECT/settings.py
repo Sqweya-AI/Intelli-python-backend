@@ -31,11 +31,9 @@ DATABASES = {
 }
 
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0'
-]
+ALLOWED_HOSTS = ['127.0.0.1']
+#CORS_ALLOWED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://0.0.0.0'] #not sure about this
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

@@ -1,28 +1,73 @@
-//--no compose
+#BUILDING SINGLE IMAGE
 docker build --tag python-django .
 docker run --publish 8000:8000 python-django
 
-//---
+#USING MULTICONTAINER
 docker-compose build
 docker-compose run --rm app django-admin startproject core.
 docker-compose up
 
+#PULLING IMAGES 
+docker pull intelli_backend_image:latest
+docker pull dpage/pgadmin4:latest
+docker pull postgres:latest
+
+#REBUILDING && RE RUN MULTICONTAINER
 docker-compose down
 docker-compose up --build
 
+#AZURE 
+------------------------------------------------------------------------------------
+az login
+az acr login --name intelliappregistry
+az account set --subscription 0b91777f-a843-452f-aef0-5a70934442a0
+az acr update -n intelliAppRegistry --admin-enabled true
 
-
-
-
-#rebuilding the images?
-# Build the new Docker image
-docker build -t intelli_backend_image:latest .
-
-# Tag the new Docker image
 docker tag intelli_backend_image:latest intelliappregistry.azurecr.io/intelli_backend_app:latest
-
-# Push the new Docker image to the container registry
 docker push intelliappregistry.azurecr.io/intelli_backend_app:latest
+
+docker tag postgres:latest intelliappregistry.azurecr.io/postgres:latest
+docker push intelliappregistry.azurecr.io/postgres:latest
+
+docker tag dpage/pgadmin4:latest intelliappregistry.azurecr.io/dpage/pgadmin4:latest
+docker push intelliappregistry.azurecr.io/dpage/pgadmin4:latest
+
+
+
+#DEPLOYING A CONTAINER WITH CONTAINERS INSIDE USING THE aci-confi.yml, builiding AMD images
+------------------------------------------------------------------------------------
+docker build --platform linux/amd64 -t intelli_backend_image:latest .
+docker build --platform linux/amd64 -t postgres:latest .
+docker build --platform linux/amd64 -t dpage/pgadmin4:latest .
+
+docker tag intelli_backend_image:latest intelliappregistry.azurecr.io/intelli_backend_image:latest
+docker tag postgres:latest intelliappregistry.azurecr.io/postgres:latest
+docker tag dpage/pgadmin4:latest intelliappregistry.azurecr.io/dpage/pgadmin4:latest
+
+docker push intelliappregistry.azurecr.io/intelli_backend_image:latest
+docker push intelliappregistry.azurecr.io/postgres:latest
+docker push intelliappregistry.azurecr.io/dpage/pgadmin4:latest
+
+az acr update -n intelliAppRegistry --admin-enabled true
+az container create --resource-group intelliResourceGroup --file aci-config.yaml
+
+
+
+
+#PRUNE #cleaning
+#remove un running containers
+docker rm -vf $(docker ps -aq -f status=exited)
+
+#remove un running images (dangling?)
+docker image prune -a
+
+docker system prune
+
+
+
+
+
+
 
 
 
@@ -32,6 +77,7 @@ az login
 
 # Set the subscription where your Azure Container Registry and Container Instances are located
 az account set --subscription <subscription-id>
+az acr login --name intelliappregistry
 
 # Pull the latest Docker image from the Azure Container Registry
 docker pull intelliappregistry.azurecr.io/intelli_backend_app:latest
@@ -45,7 +91,12 @@ az container create --name <new-container-instance-name> --resource-group <resou
 
 
 
-#after setting subscription
-az acr login --name intelliappregistry
+#rebuilding the images?
+# Build the new Docker image
+docker build -t intelli_backend_image:latest .
+
+# Tag the new Docker image
 docker tag intelli_backend_image:latest intelliappregistry.azurecr.io/intelli_backend_app:latest
+
+# Push the new Docker image to the container registry
 docker push intelliappregistry.azurecr.io/intelli_backend_app:latest
