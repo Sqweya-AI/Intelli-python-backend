@@ -1,8 +1,10 @@
 from django.db import models
 
 class ReservationModel(models.Model):
-    customer_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     customer_email = models.EmailField()
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     customer_phone = models.CharField(max_length=20)
     number_of_adult_guests = models.IntegerField()
     number_of_child_guests = models.IntegerField()
