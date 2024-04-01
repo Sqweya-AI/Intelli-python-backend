@@ -17,10 +17,7 @@ class ChannelSerializer(serializers.ModelSerializer):
         model = ContactChannelModel
         fields = '__all__'
 
-class ReservationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReservationModel
-        fields = '__all__'
+
 
 class DashboardModelSerializer(serializers.ModelSerializer):
     class Meta:

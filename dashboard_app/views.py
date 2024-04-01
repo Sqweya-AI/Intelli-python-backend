@@ -1,14 +1,15 @@
 # dashboard_app/views.py
 from auth_app.models import User
 from auth_app.serializers import UserSerializer
+from main_app.models import ReservationModel
 from .serializers import *
+from .models import *
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
-from .models import AgentModel, ContactChannelModel, DashboardModel, UserSettingsModel, HotelSettingsModel
-from .serializers import AgentSerializer, ChannelSerializer, DashboardModelSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from billing_app.views import BillingViewSet
+
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -34,7 +35,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
-            return Response({'message': 'Reservations data for BOTH manager & customer service'})
+            reservations = ReservationModel.objects.all()
+            return Response({'message': f'Reservations data for BOTH manager & customer service, reservations= {reservations}'}, status=200)
         return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
     # OVERVIEW
