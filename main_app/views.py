@@ -29,6 +29,11 @@ class ReservationAPIView(APIView):
        if serializer.is_valid():
           serializer.save()
           reservation = serializer.data
+          print("")
+          print("")
+          print("RESERVATION CREATED")
+          print("")
+          print("")
           return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
        return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
