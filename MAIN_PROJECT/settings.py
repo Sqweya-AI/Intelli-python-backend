@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -33,6 +34,15 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 
 
 # # DATABASES
+#postgres-render-db
+DATABASES = {
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600
+    )
+}
+
 
 # #postgres-docker-db
 # DATABASES = {
@@ -46,17 +56,17 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 #     }
 # }
 
-#postgres-local-db
-DATABASES = {
-    'default': {
-        'ENGINE': POSTGRES_DB_ENGINE,
-        'NAME': POSTGRES_DB_NAME,
-        'USER': POSTGRES_DB_USER,
-        'PASSWORD' : POSTGRES_DB_PASSWORD,
-        'HOST': POSTGRES_DB_HOST, 
-        'PORT': POSTGRES_DB_PORT
-    }
-}
+# #postgres-local-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
 
 
 ALLOWED_HOSTS = ['127.0.0.1']
@@ -93,6 +103,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'MAIN_PROJECT.urls'
@@ -136,12 +149,17 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+STATIC_URL = '/static/'
 
 
-
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 
