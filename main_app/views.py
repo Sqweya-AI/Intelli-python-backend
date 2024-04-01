@@ -39,7 +39,7 @@ class ReservationAPIView(APIView):
 
 
     def get(self, request):
-        reservations = ReservationModel.objects.all()
+        reservations = ReservationModel.objects.all().order_by('-id')
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
 
