@@ -36,7 +36,7 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationModel.objects.all()
-            return Response({'message': f'Reservations data for BOTH manager & customer service, reservations= {reservations}'}, status=200)
+            return Response({'message': f'Reservations data for BOTH manager & customer service'}, {"reservations":reservations}, status=200)
         return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
     # OVERVIEW
