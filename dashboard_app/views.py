@@ -2,6 +2,7 @@
 from auth_app.models import User
 from auth_app.serializers import UserSerializer
 from main_app.models import ReservationModel
+from main_app.serializers import ReservationSerializer
 from .serializers import *
 from .models import *
 from rest_framework.decorators import action
@@ -35,8 +36,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
-            reservations = ReservationModel.objects.all()
-            return Response({'message': f'Reservations data for BOTH manager & customer service'}, {"reservations":reservations}, status=200)
+            reservations = ReservationSerializer(ReservationModel.objects.all(), many=True).data
+            return Response({'message': f'Reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
         return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
     # OVERVIEW
