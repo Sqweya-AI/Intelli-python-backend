@@ -13,14 +13,14 @@ class HomePageView(APIView):
         return Response({"HOME": "home page"})
     
 
-@api_view(['POST'])
-@authentication_classes([CsrfExemptSessionAuthentication]) 
-def create_reservation(request):
-    serializer = ReservationSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'message': 'Reservation created successfully'}, status=status.HTTP_201_CREATED)
-    return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['POST'])
+# @authentication_classes([CsrfExemptSessionAuthentication]) 
+# def create_reservation(request):
+#     serializer = ReservationSerializer(data=request.data)
+#     if serializer.is_valid():
+#         serializer.save()
+#         return Response({'message': 'Reservation created successfully'}, status=status.HTTP_201_CREATED)
+#     return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @authentication_classes([CsrfExemptSessionAuthentication]) 
 class ReservationAPIView(APIView):
@@ -28,7 +28,8 @@ class ReservationAPIView(APIView):
        serializer = ReservationSerializer(data=request.data)
        if serializer.is_valid():
           serializer.save()
-          return Response({'message': 'Reservation created successfully'}, status=status.HTTP_201_CREATED)
+          reservation = serializer.data
+          return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
        return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
