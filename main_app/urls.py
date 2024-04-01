@@ -5,6 +5,5 @@ from .views import *
 urlpatterns = [
     path('', HomePageView.as_view(), name='home-page'),
     path('home', HomePageView.as_view(), name='home-page'),
-    path('make-reservation', create_reservation, name='make-reservation'),
     path('reservations', ReservationAPIView.as_view(), name='reservations'),
 ]
