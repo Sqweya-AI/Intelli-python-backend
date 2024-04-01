@@ -14,10 +14,36 @@ DEBUG = os.getenv('DEBUG')
 DB_ENGINE = os.getenv('DB_ENGINE')
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
-DEBUG = True
+DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+
+#POSTGRES
+POSTGRES_DB_ENGINE = os.getenv('POSTGRES_DB_ENGINE')
+POSTGRES_DB_USER = os.getenv('POSTGRES_DB_USER')
+POSTGRES_DB_PASSWORD = os.getenv('POSTGRES_DB_PASSWORD')
+POSTGRES_DB_NAME = os.getenv('POSTGRES_DB_NAME')
+POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
+POSTGRES_DB_HOST = os.getenv('POSTGRES_DB_HOST')
+POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 
 
-# Custom mySQL 
+# POSTGRES_USER=POSTGRES_DB_USER
+# POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
+# POSTGRES_DB=POSTGRES_DB_NAME
+
+
+# DATABASES
+# postgres-render-db
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'), #from render postgres
+        conn_max_age=600
+    )
+}
+
+
+# #postgres-docker-db
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
@@ -38,7 +64,7 @@ DATABASES = {
 
 
 ALLOWED_HOSTS = ['*']
-#CORS_ALLOWED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://0.0.0.0'] #not sure about this
+
 
 
 AUTHENTICATION_BACKENDS = [

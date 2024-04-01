@@ -16,12 +16,7 @@ class AgentRoleModel(models.Model):
     def __str__(self):
         return self.role
 
-class ReservationModel(models.Model):
-    customer_name = models.CharField(max_length=100)
-    date = models.DateTimeField()
-    agent = models.ForeignKey(AgentModel, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.customer_name
+
 
 class ContactChannelModel(models.Model):
     name = models.CharField(max_length=100)
@@ -31,7 +26,6 @@ class ContactChannelModel(models.Model):
 class DashboardModel(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    reservation = models.ForeignKey(ReservationModel, on_delete=models.CASCADE)
     def __str__(self):
         return f'User - {self.user.username} (Manager)'
 

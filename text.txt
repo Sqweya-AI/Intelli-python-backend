@@ -64,6 +64,29 @@ docker image prune -a
 docker system prune
 
 
+#RENDER
+python -m gunicorn MAIN_PROJECT.asgi:application -k uvicorn.workers.UvicornWorker #TEST LOCALLY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
