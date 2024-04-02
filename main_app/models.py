@@ -1,3 +1,5 @@
+# main_app/models.py
+
 from django.db import models
 
 class ReservationModel(models.Model):
@@ -12,4 +14,4 @@ class ReservationModel(models.Model):
     check_out_date = models.DateTimeField()
     room_type = models.CharField(max_length=100)
     def __str__(self):
-        return self.customer_name
+        return self.first_name + ' ' + self.last_name

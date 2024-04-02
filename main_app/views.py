@@ -37,11 +37,14 @@ class ReservationAPIView(APIView):
         except ReservationModel.DoesNotExist:
             return Response({'error': 'Reservation not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ReservationSerializer(reservation, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'Success': 'Reservation updated successfully', "The reservation is now":serializer.data})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = ReservationSerializer(reservation, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'Success': 'Reservation updated successfully', "The reservation is now": serializer.data})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, pk):
         try:
