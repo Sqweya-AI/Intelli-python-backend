@@ -2,7 +2,9 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from auth_app.managers import UserManager
 import uuid
+
 
 USER_ROLES = (
     ('manager', 'Hotel Manager'),
@@ -11,6 +13,7 @@ USER_ROLES = (
 )
 
 class User(AbstractUser):
+    objects = UserManager()
     role = models.CharField(max_length=30, choices=USER_ROLES, blank=False, null=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     password = models.CharField(max_length=100, blank=False, null=False)
