@@ -33,14 +33,14 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 # POSTGRES_DB=POSTGRES_DB_NAME
 
 
-# DATABASES
-# postgres-render-db
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'), #from render postgres
-        conn_max_age=600
-    )
-}
+# # DATABASES
+# # postgres-render-db
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
 
 
 # #postgres-docker-db
@@ -55,17 +55,18 @@ DATABASES = {
 #     }
 # }
 
-# #postgres-local-db
-# DATABASES = {
-#     'default': {
-#         'ENGINE': POSTGRES_DB_ENGINE,
-#         'NAME': POSTGRES_DB_NAME,
-#         'USER': POSTGRES_DB_USER,
-#         'PASSWORD' : POSTGRES_DB_PASSWORD,
-#         'HOST': POSTGRES_DB_HOST, 
-#         'PORT': POSTGRES_DB_PORT
-#     }
-# }
+
+#postgres-local-db
+DATABASES = {
+    'default': {
+        'ENGINE': POSTGRES_DB_ENGINE,
+        'NAME': POSTGRES_DB_NAME,
+        'USER': POSTGRES_DB_USER,
+        'PASSWORD' : POSTGRES_DB_PASSWORD,
+        'HOST': POSTGRES_DB_HOST, 
+        'PORT': POSTGRES_DB_PORT
+    }
+}
 
 
 ALLOWED_HOSTS = ['*']
