@@ -4,8 +4,8 @@ from .models import ReservationModel
 
 class ReservationSerializer(serializers.ModelSerializer):
     # Specify input format for date fields
-    check_in_date = serializers.DateField(input_formats=['%m/%d/%Y'])
-    check_out_date = serializers.DateField(input_formats=['%m/%d/%Y'])
+    check_in_date = serializers.DateTimeField(input_formats=['%m/%d/%Y'])
+    check_out_date = serializers.DateTimeField(input_formats=['%m/%d/%Y'])
 
     class Meta:
         model = ReservationModel
