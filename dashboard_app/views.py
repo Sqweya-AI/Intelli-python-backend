@@ -57,8 +57,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationSerializer(ReservationModel.objects.filter(status='confirmed'), many=True).data
-            return Response({'message': f'Rejected reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        return Response({'message': 'You do not have permission to access rejected reservations'}, status=403)
+            return Response({'message': f'Confirmed reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
+        return Response({'message': 'You do not have permission to access comfirmed reservations'}, status=403)
     
     @action(detail=False, methods=['get'])
     def rejected(self, request):
