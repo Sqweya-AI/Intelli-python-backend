@@ -51,14 +51,14 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
         return Response({'message': 'You do not have permission to access pending reservations'}, status=403)
     
     @action(detail=False, methods=['get'])
-    def comfirmed(self, request):
+    def confirmed(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
-            reservations = ReservationSerializer(ReservationModel.objects.filter(status='comfirmed'), many=True).data
-            return Response({'message': f'comfirmed reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        return Response({'message': 'You do not have permission to access comfirmed reservations'}, status=403)
+            reservations = ReservationSerializer(ReservationModel.objects.filter(status='confirmed'), many=True).data
+            return Response({'message': f'Rejected reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
+        return Response({'message': 'You do not have permission to access rejected reservations'}, status=403)
     
     @action(detail=False, methods=['get'])
     def rejected(self, request):
@@ -105,6 +105,29 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
             serializer = ReservationSerializer(reservations, many=True)
             return Response({'message': 'Search results', 'Search Query':query, 'reservations': serializer.data}, status=status.HTTP_200_OK)
         return Response({'message': 'You do not have permission to access reservations.'}, status=status.HTTP_403_FORBIDDEN)
+    
+    # UPDATE RESERVATION
+    @action(detail=False, methods=['post'])
+    def update_reservation(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservation_id = request.data.get('reservation_id', None)
+            if not reservation_id:
+                return Response({'error': 'Reservation ID is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                reservation = ReservationModel.objects.get(id=reservation_id)
+            except ReservationModel.DoesNotExist:
+                return Response({'error': 'Reservation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ReservationSerializer(instance=reservation, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'Reservation updated successfully.'}, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'You do not have permission to update reservations.'}, status=status.HTTP_403_FORBIDDEN)
+    
     
     # CONFIRM RESERVATION
     @action(detail=False, methods=['post'])
