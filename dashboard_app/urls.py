@@ -6,6 +6,7 @@ from .views import  *
 
 router = routers.DefaultRouter()
 router.register(r'', DashboardModelViewSet)
+router.register(r'reservations', DashboardModelViewSet)
 router.register(r'agents', AgentViewSet)
 router.register(r'channels', ChannelViewSet)
 router.register(r'user-settings', UserSettingsViewSet)
