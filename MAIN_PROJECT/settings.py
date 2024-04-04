@@ -69,7 +69,8 @@ DATABASES = {
 # }
 
 
-ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
+# ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 
