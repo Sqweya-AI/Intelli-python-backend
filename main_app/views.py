@@ -13,30 +13,25 @@ class HomePageView(APIView):
 
 @authentication_classes([CsrfExemptSessionAuthentication]) 
 class ReservationAPIView(APIView):
-    def post(self, request):
-       serializer = ReservationSerializer(data=request.data)
-       if serializer.is_valid():
-          serializer.save()
-          reservation = serializer.data
-          print("")
-          print("")
-          print("RESERVATION CREATED")
-          print("")
-          print("")
-          return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
-       return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         reservations = ReservationModel.objects.all().order_by('-id')
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
+    
+    def post(self, request):
+       serializer = ReservationSerializer(data=request.data)
+       if serializer.is_valid():
+          serializer.save()
+          reservation = serializer.data
+          return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
+       return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         try:
             reservation = ReservationModel.objects.get(pk=pk)
         except ReservationModel.DoesNotExist:
             return Response({'error': 'Reservation not found'}, status=status.HTTP_404_NOT_FOUND)
-
         try:
             serializer = ReservationSerializer(reservation, data=request.data)
             if serializer.is_valid():
@@ -46,11 +41,10 @@ class ReservationAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def delete(self, request, pk):
+    def delete(self, request, pk): #two of these are available, the other one in the DashboardModelViewSet of the dashboard_app
         try:
             reservation = ReservationModel.objects.get(pk=pk)
         except ReservationModel.DoesNotExist:
             return Response({'error': 'Reservation not found'}, status=status.HTTP_404_NOT_FOUND)
-
         reservation.delete()
         return Response({"Success": f'{reservation.first_name}\'s Reservation Deleted! (id = {pk})' }, status=status.HTTP_204_NO_CONTENT)

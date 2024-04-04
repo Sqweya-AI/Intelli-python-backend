@@ -10,8 +10,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from billing_app.views import BillingViewSet
-
-
+from django.db.models import Q
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -40,6 +39,37 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
             return Response({'message': f'Reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
         return Response({'message': 'You do not have permission to access reservations'}, status=403)
     
+    # FILTER RESERVATIONS
+    @action(detail=False, methods=['get'])
+    def pending(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservations = ReservationSerializer(ReservationModel.objects.filter(status='pending'), many=True).data
+            return Response({'message': f'Pending reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
+        return Response({'message': 'You do not have permission to access pending reservations'}, status=403)
+    
+    @action(detail=False, methods=['get'])
+    def comfirmed(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservations = ReservationSerializer(ReservationModel.objects.filter(status='comfirmed'), many=True).data
+            return Response({'message': f'comfirmed reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
+        return Response({'message': 'You do not have permission to access comfirmed reservations'}, status=403)
+    
+    @action(detail=False, methods=['get'])
+    def rejected(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservations = ReservationSerializer(ReservationModel.objects.filter(status='rejected'), many=True).data
+            return Response({'message': f'Rejected reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
+        return Response({'message': 'You do not have permission to access rejected reservations'}, status=403)
+    
     # OVERVIEW
     @action(detail=False, methods=['get'])
     def overview(self, request):
@@ -54,12 +84,89 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
             return Response({'content': 'Cus-SERVICE AGENT\'S Dashboard', "User Role": serializer.data['role']}, status=status.HTTP_200_OK)
         return Response({'message': 'User not allowed to access dashboard overview'}, status=403)
     
+    
+    # SEARCH RESERVATIONS
+    @action(detail=False, methods=['get'])
+    def search(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        query = request.query_params.get('query', None)
+        if not query:
+            return Response({'error': 'Search query is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservations = ReservationModel.objects.filter(
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(customer_email__icontains=query) |
+                Q(customer_phone__icontains=query) |
+                Q(room_type__icontains=query)
+            )
+            serializer = ReservationSerializer(reservations, many=True)
+            return Response({'message': 'Search results', 'Search Query':query, 'reservations': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'message': 'You do not have permission to access reservations.'}, status=status.HTTP_403_FORBIDDEN)
+    
+    # CONFIRM RESERVATION
+    @action(detail=False, methods=['post'])
+    def confirm_reservation(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservation_id = request.data.get('reservation_id', None)
+            if not reservation_id:
+                return Response({'error': 'Reservation ID is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                reservation = ReservationModel.objects.get(id=reservation_id)
+            except ReservationModel.DoesNotExist:
+                return Response({'error': 'Reservation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            reservation.status = 'confirmed'
+            reservation.save()
+            return Response({'Success': 'Reservation confirmed.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'You do not have permission to confirm reservations.'}, status=status.HTTP_403_FORBIDDEN)
+
+    # REJECT RESERVATION
+    @action(detail=False, methods=['post'])
+    def reject_reservation(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager', 'customer_service']:
+            reservation_id = request.data.get('reservation_id', None)
+            if not reservation_id:
+                return Response({'error': 'Reservation ID is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                reservation = ReservationModel.objects.get(id=reservation_id)
+            except ReservationModel.DoesNotExist:
+                return Response({'error': 'Reservation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            reservation.status = 'rejected'
+            reservation.save()
+            return Response({'Success': 'Reservation rejected.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'You do not have permission to reject reservations.'}, status=status.HTTP_403_FORBIDDEN)
+    
+    # DELETE RESERVATION
+    @action(detail=False, methods=['post'])
+    def delete_reservation(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        if user.role in ['manager']:
+            reservation_id = request.data.get('reservation_id', None)
+            if not reservation_id:
+                return Response({'error': 'Reservation ID is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                reservation = ReservationModel.objects.get(id=reservation_id)
+                reservation.delete()
+                return Response({'Success': 'Reservation deleted'}, status=status.HTTP_200_OK)
+            except ReservationModel.DoesNotExist:
+                return Response({'error': 'Reservation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'You do not have permission to delete reservations.'}, status=status.HTTP_403_FORBIDDEN)
+    
+
     # SUBSCRIBE
     @action(detail=False, methods=['post'])
     def subscribe(self, request):
         return BillingViewSet.subscribe(self, request)
-
-
 
 class ChannelViewSet(viewsets.ModelViewSet):
     queryset = ContactChannelModel.objects.all()
