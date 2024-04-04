@@ -33,14 +33,14 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 # POSTGRES_DB=POSTGRES_DB_NAME
 
 
-# # DATABASES
-# # postgres-render-db
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.getenv('DATABASE_URL'), #from render postgres
-#         conn_max_age=600
-#     )
-# }
+# DATABASES
+# postgres-render-db
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'), #from render postgres
+        conn_max_age=600
+    )
+}
 
 
 # #postgres-docker-db
