@@ -11,14 +11,9 @@ class HomePageView(APIView):
     def get(self, request):
         return Response({"HOME": "home page"})
 
+#Reservation creation and viewing
 @authentication_classes([CsrfExemptSessionAuthentication]) 
 class ReservationAPIView(APIView):
-
-    def get(self, request):
-        reservations = ReservationModel.objects.all().order_by('-id')
-        serializer = ReservationSerializer(reservations, many=True)
-        return Response(serializer.data)
-    
     def post(self, request):
        serializer = ReservationSerializer(data=request.data)
        if serializer.is_valid():
@@ -26,25 +21,20 @@ class ReservationAPIView(APIView):
           reservation = serializer.data
           return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
        return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
 
-    def put(self, request, pk):
-        try:
-            reservation = ReservationModel.objects.get(pk=pk)
-        except ReservationModel.DoesNotExist:
-            return Response({'error': 'Reservation not found'}, status=status.HTTP_404_NOT_FOUND)
-        try:
-            serializer = ReservationSerializer(reservation, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'Success': 'Reservation updated successfully', "The reservation is now": serializer.data})
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def delete(self, request, pk): #two of these are available, the other one in the DashboardModelViewSet of the dashboard_app
-        try:
-            reservation = ReservationModel.objects.get(pk=pk)
-        except ReservationModel.DoesNotExist:
-            return Response({'error': 'Reservation not found'}, status=status.HTTP_404_NOT_FOUND)
-        reservation.delete()
-        return Response({"Success": f'{reservation.first_name}\'s Reservation Deleted! (id = {pk})' }, status=status.HTTP_204_NO_CONTENT)
+#Waitlist joining and viweing
+@authentication_classes([CsrfExemptSessionAuthentication]) 
+class WaitlistMemberAPIView(APIView):
+    def post(self, request):
+       serializer = WaitlistMemberSerializer(data=request.data)
+       if serializer.is_valid():
+          serializer.save()
+          waitlist_member = serializer.data
+          return Response({'message': 'Waitlist member created successfully', "The waitlist member":waitlist_member}, status=status.HTTP_201_CREATED)
+       return Response({'error': 'Failed to create waitlist member', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        waitlist_members = WaitlistMember.objects.all()
+        serializer = WaitlistMemberSerializer(waitlist_members, many=True)
+        return Response(serializer.data)

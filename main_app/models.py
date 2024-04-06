@@ -20,5 +20,17 @@ class ReservationModel(models.Model):
     check_out_date = models.DateTimeField()
     room_type = models.CharField(max_length=100)
     status = models.CharField(max_length=100, choices=reservation_status, default='pending')
+    specia_requests = models.TextField(max_length=500, blank=True, null=True)
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+    
+
+
+class WaitlistMember(models.Model):
+    waiter_name = models.CharField(max_length=100)
+    waiter_email = models.EmailField()
+    waiter_phone = models.CharField(max_length=20)
+    hotel_location = models.CharField(max_length=100)
+    hotel_name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name + ' ' + self.hotel_name
