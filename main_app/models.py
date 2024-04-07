@@ -28,6 +28,6 @@ class ReservationModel(models.Model):
 
 class WaitlistMember(models.Model):
     email_address = models.CharField(max_length=100, blank=False, null=False)    
-    company_name = models.EmailField(max_length=100, blank=False, null=False)    
+    company_name = models.CharField(max_length=100, blank=False, null=False)    
     def __str__(self):
         return self.name + ' ' + self.hotel_name

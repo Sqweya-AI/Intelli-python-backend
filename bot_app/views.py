@@ -52,6 +52,7 @@ def chat(request):
     try:
         chat_history.append({"role": "user", "content": user_input})
         response = openai.chat.completions.create(
+        # response = openai.ChatCompletion.create(
             model=LLM_model,
             messages=[{"role": "system", "content": LLM_role_instructions}] + chat_history,
             max_tokens=256,
