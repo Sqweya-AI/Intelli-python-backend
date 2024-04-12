@@ -96,11 +96,15 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://*',
-    'https://*',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://*',
+#     'https://*',
+# ]
+# Allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
 
+
+# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
