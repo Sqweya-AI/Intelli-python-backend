@@ -35,7 +35,7 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 
 # DATABASES
 
-# postgres-render-db
+#default db
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'), #from render postgres
@@ -93,6 +93,12 @@ INSTALLED_APPS = [
     'bot_app',
     'dashboard_app',
     'billing_app',
+    'corsheaders',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://*',
+    'https://*',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +110,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'MAIN_PROJECT.urls'
