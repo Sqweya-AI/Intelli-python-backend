@@ -10,13 +10,10 @@ class BillingViewSet(viewsets.ModelViewSet):
     serializer_class = BillingModelSerializer
     authentication_classes = [CsrfExemptSessionAuthentication] # to disable csrf check
     
-    def list(self, request):
-        pass
-    
     @action(detail=False, methods=['post'])
     def subscribe(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         if not request.user.role == 'manager':
             return Response({'error': 'User is not a manager'}, status=status.HTTP_403_FORBIDDEN)
         card_number = str(request.data.get('card_number'))

@@ -35,13 +35,13 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 
 # DATABASES
 
-#default db
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'), #from render postgres
-        conn_max_age=600
-    )
-}
+# #default db
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
 
 
 # #postgres-docker-db
@@ -57,26 +57,24 @@ DATABASES = {
 # }
 
 
-# #postgres-local-db
-# DATABASES = {
-#     'default': {
-#         'ENGINE': POSTGRES_DB_ENGINE,
-#         'NAME': POSTGRES_DB_NAME,
-#         'USER': POSTGRES_DB_USER,
-#         'PASSWORD' : POSTGRES_DB_PASSWORD,
-#         'HOST': POSTGRES_DB_HOST, 
-#         'PORT': POSTGRES_DB_PORT
-#     }
-# }
+#postgres-local-db
+DATABASES = {
+    'default': {
+        'ENGINE': POSTGRES_DB_ENGINE,
+        'NAME': POSTGRES_DB_NAME,
+        'USER': POSTGRES_DB_USER,
+        'PASSWORD' : POSTGRES_DB_PASSWORD,
+        'HOST': POSTGRES_DB_HOST, 
+        'PORT': POSTGRES_DB_PORT
+    }
+}
 
 
 # ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
 ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    # 'path.to.YourCustomAuthBackend',
-]
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -101,7 +99,7 @@ INSTALLED_APPS = [
 #     'https://*',
 # ]
 # Allow all origins
-CORS_ALLOW_ALL_ORIGINS = True
+
 
 
 # MIDDLEWARE
@@ -137,6 +135,10 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'MAIN_PROJECT.wsgi.application'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # 'path.to.YourCustomAuthBackend',
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {

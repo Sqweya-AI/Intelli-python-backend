@@ -31,8 +31,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # RESERVATIONS
     @action(detail=False, methods=['get'])
     def reservations(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationSerializer(ReservationModel.objects.all(), many=True).data
@@ -42,8 +42,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # FILTER RESERVATIONS
     @action(detail=False, methods=['get'])
     def pending(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationSerializer(ReservationModel.objects.filter(status='pending'), many=True).data
@@ -52,8 +52,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def confirmed(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationSerializer(ReservationModel.objects.filter(status='confirmed'), many=True).data
@@ -62,8 +62,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def rejected(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservations = ReservationSerializer(ReservationModel.objects.filter(status='rejected'), many=True).data
@@ -73,8 +73,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # OVERVIEW
     @action(detail=False, methods=['get'])
     def overview(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         isVerified = request.user.is_email_verified
         if request.user.role == 'manager':
             serializer = UserSerializer(request.user)
@@ -88,8 +88,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # SEARCH RESERVATIONS
     @action(detail=False, methods=['get'])
     def search(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         query = request.query_params.get('query', None)
         if not query:
             return Response({'error': 'Search query is missing.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -109,8 +109,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # UPDATE RESERVATION
     @action(detail=False, methods=['post'])
     def update_reservation(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -132,8 +132,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # CONFIRM RESERVATION
     @action(detail=False, methods=['post'])
     def confirm_reservation(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -151,8 +151,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # REJECT RESERVATION
     @action(detail=False, methods=['post'])
     def reject_reservation(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -170,8 +170,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # DELETE RESERVATION
     @action(detail=False, methods=['post'])
     def delete_reservation(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # if not request.user.is_authenticated:
+            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager']:
             reservation_id = request.data.get('reservation_id', None)
