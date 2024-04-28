@@ -13,6 +13,7 @@ from datetime import timedelta
 from .models import User
 import uuid
 
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return  # SKIP CSRF check

@@ -20,7 +20,7 @@ class ReservationModel(models.Model):
     check_out_date = models.DateTimeField()
     room_type = models.CharField(max_length=100)
     status = models.CharField(max_length=100, choices=reservation_status, default='pending')
-    specia_requests = models.TextField(max_length=500, blank=True, null=True)
+    special_requests = models.TextField(max_length=500, blank=True, null=True)
     def __str__(self):
         return self.first_name + ' ' + self.last_name
     
