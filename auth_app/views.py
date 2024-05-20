@@ -39,6 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
         email = request.data.get("email")
         role = request.data.get("role")
         password = request.data.get("password")
+        company_name = request.data.get("company_name")
         if not email or not role or not password:
             return Response({'error': 'Email, role and password are required'}, status=status.HTTP_400_BAD_REQUEST)
         email_verification_token = uuid.uuid4()
@@ -51,6 +52,8 @@ class UserViewSet(viewsets.ModelViewSet):
             email=email,
             role=role,
             email_verification_token=email_verification_token,
+            company_name = company_name
+            
         )
         new_user.set_password(password)
         new_user.save()

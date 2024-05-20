@@ -35,24 +35,11 @@ POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 
 # DATABASES
 # RENDER POSTGRESS
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'), #from render postgres
-        conn_max_age=600
-    )
-}
-
-
-# #postgres-docker-db
 # DATABASES = {
-#     'default': {
-#         'ENGINE': POSTGRES_DB_ENGINE,
-#         'NAME': POSTGRES_DB_NAME,
-#         'USER': POSTGRES_DB_USER,
-#         'PASSWORD' : POSTGRES_DB_PASSWORD,
-#         'HOST': POSTGRES_DOCKER_DB_HOST, 
-#         'PORT': POSTGRES_DB_PORT
-#     }
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
 # }
 
 
@@ -67,6 +54,20 @@ DATABASES = {
 #         'PORT': POSTGRES_DB_PORT
 #     }
 # }
+
+# #postgres-docker-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DOCKER_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
+
+
 
 
 # ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
@@ -225,13 +226,13 @@ if not DEBUG:
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
 
 
-# #DEFAULT DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+#DEFAULT DB
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # # Custom mySQL 
 # DATABASES = {
