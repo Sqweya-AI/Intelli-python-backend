@@ -12,6 +12,7 @@ from django.utils import timezone
 from datetime import timedelta
 from .models import User
 import uuid
+import random
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -42,7 +43,7 @@ class UserViewSet(viewsets.ModelViewSet):
         company_name = request.data.get("company_name")
         if not email or not role or not password:
             return Response({'error': 'Email, role and password are required'}, status=status.HTTP_400_BAD_REQUEST)
-        email_verification_token = uuid.uuid4()
+        email_verification_code = random.randint(100000, 999999)
 
         if User.objects.filter(email=email).exists():
             return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,7 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
             username=email,
             email=email,
             role=role,
-            email_verification_token=email_verification_token,
+            email_verification_code=email_verification_code,
             company_name = company_name
             
         )
@@ -59,18 +60,18 @@ class UserViewSet(viewsets.ModelViewSet):
         new_user.save()
 
         # Send verification email
-        send_verification_email(email, email_verification_token)
+        send_verification_email(email, email_verification_code)
         serializer = UserSerializer(new_user, many=False)
-        return Response({"message": "Account successfully created", "data": serializer.data, "verification_token": email_verification_token},  status=status.HTTP_201_CREATED)
+        return Response({"message": "Account successfully created", "data": serializer.data, "verification_code": email_verification_code},  status=status.HTTP_201_CREATED)
 
     # VERIFY EMAIL
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def verify_email(self, request):
         email = request.data.get('email')
-        email_verification_token = request.data.get('email_verification_token')
+        email_verification_code = request.data.get('email_verification_code')
         user = User.objects.filter(email=email).first()
         if user:
-            if user.email_verification_token == email_verification_token:
+            if user.email_verification_code == email_verification_code:
                 if user.is_email_verified:
                     return Response({'message': 'Email already confirmed'}, status=status.HTTP_200_OK)
                 user.is_email_verified = True
@@ -113,7 +114,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.reset_token_expiry = token_expiry
             user.save()
             send_reset_password_email(user.email, str(reset_token))  # Convert UUID to string for sending in the email
-            return Response({'message': f'Reset link has been sent to your email.', "link": f'http://localhost:8000/auth/reset_password/{str(reset_token)}'})
+            return Response({'message': f'Reset link has been sent to your email.', "link": f'https://intelli-python-backend.onrender.com/auth/reset_password/{str(reset_token)}'})
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
     #RESET PASSWORD

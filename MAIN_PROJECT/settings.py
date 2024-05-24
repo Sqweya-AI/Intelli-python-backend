@@ -28,6 +28,16 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 
 
+
+#DEFAULT DB
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
 # POSTGRES_USER=POSTGRES_DB_USER
 # POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
 # POSTGRES_DB=POSTGRES_DB_NAME
@@ -73,7 +83,6 @@ POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 # ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
 ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
-
 
 
 # Application definition
@@ -139,6 +148,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     # 'path.to.YourCustomAuthBackend',
 ]
+EMAIL_BACKEND = 'resend.backend.ResendBackend'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -225,14 +235,6 @@ if not DEBUG:
 # EMAIL_HOST_USER = 'saadatsamjo@gmail.com'
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
 
-
-#DEFAULT DB
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 # # Custom mySQL 
 # DATABASES = {

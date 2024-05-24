@@ -108,7 +108,9 @@ def translate(request):
             "error": str(e)
         }, status=500)
 
-# User input's analysis 
+# User input's analysis
+@authentication_classes([JWTAuthentication])
+@permission_classes([]) 
 class AnalyseView(APIView):
     def post(self, request):
         user_input = request.data.get('user_input')
