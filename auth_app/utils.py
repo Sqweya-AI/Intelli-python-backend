@@ -12,7 +12,7 @@ def send_reset_password_email(email, reset_token):
     "from": "support@medivarse.com",
     "to": email,
     "subject": "Reset your password!",
-    "html":f'<p><strong>Pasword Reset </strong> link for <strong {'variable'} </strong></p>' 
+    "html":f'<p><strong>Pasword Reset </strong> link for <strong> {'variable'} </strong></p>' 
         f'<p>{reset_token}</p>' 
         '<strong>Rapid Rabbit </strong>'
     })
