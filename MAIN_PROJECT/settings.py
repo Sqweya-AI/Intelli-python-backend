@@ -36,6 +36,7 @@ POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 #     }
 # }
 
+
 # DATABASES
 # RENDER POSTGRESS
 DATABASES = {
@@ -44,7 +45,6 @@ DATABASES = {
         conn_max_age=600
     )
 }
-
 
 
 # ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
@@ -108,6 +108,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     # 'path.to.YourCustomAuthBackend',
 ]
+
 EMAIL_BACKEND = 'resend.backend.ResendBackend'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -140,9 +141,6 @@ if not DEBUG:
     # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
     # and renames the files with unique names for each version to support long-term caching
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-
 
 
 # POSTGRES_USER=POSTGRES_DB_USER

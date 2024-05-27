@@ -1,5 +1,6 @@
 # dashboard_app/views.py
 from rest_framework.views import APIView
+from django.utils.crypto import get_random_string
 from auth_app.models import User
 from auth_app.utils import send_invite_email
 from auth_app.serializers import UserSerializer
@@ -296,10 +297,17 @@ class EmployeesView(APIView):
 
         if User.objects.filter(email=email).exists():
             return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         default_password = '12345Intelli'
+        
+        # Ensure unique username
+        base_username = email.split('@')[0]
+        username = base_username
+        while User.objects.filter(username=username).exists():
+            username = base_username + get_random_string(4)
 
         user = User.objects.create_user(
+            username=username,
             email=email,
             password=default_password,
             role='customer_service',
