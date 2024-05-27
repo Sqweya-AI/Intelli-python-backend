@@ -29,5 +29,6 @@ def send_verification_email(email, verification_code):
         Welcome to Intelli Concierge.\
         To verify your account, use the code below when prompted to enter your verification code.\
         This code is meant to not be shared to anyone'
-        '<strong> Intelli Concierge </strong>'  
+        f'<strong> {verification_code} </strong>'  
+        f'<strong> Intelli Concierge </strong>'  
     })
