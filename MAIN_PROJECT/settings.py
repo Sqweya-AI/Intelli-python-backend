@@ -28,55 +28,22 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 
 
-
-#DEFAULT DB
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-# POSTGRES_USER=POSTGRES_DB_USER
-# POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
-# POSTGRES_DB=POSTGRES_DB_NAME
-
+# #DEFAULT DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # DATABASES
 # RENDER POSTGRESS
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.getenv('DATABASE_URL'), #from render postgres
-#         conn_max_age=600
-#     )
-# }
-
-
-# #postgres-local-db
-# DATABASES = {
-#     'default': {
-#         'ENGINE': POSTGRES_DB_ENGINE,
-#         'NAME': POSTGRES_DB_NAME,
-#         'USER': POSTGRES_DB_USER,
-#         'PASSWORD' : POSTGRES_DB_PASSWORD,
-#         'HOST': POSTGRES_DB_HOST, 
-#         'PORT': POSTGRES_DB_PORT
-#     }
-# }
-
-# #postgres-docker-db
-# DATABASES = {
-#     'default': {
-#         'ENGINE': POSTGRES_DB_ENGINE,
-#         'NAME': POSTGRES_DB_NAME,
-#         'USER': POSTGRES_DB_USER,
-#         'PASSWORD' : POSTGRES_DB_PASSWORD,
-#         'HOST': POSTGRES_DOCKER_DB_HOST, 
-#         'PORT': POSTGRES_DB_PORT
-#     }
-# }
-
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'), #from render postgres
+        conn_max_age=600
+    )
+}
 
 
 
@@ -102,13 +69,6 @@ INSTALLED_APPS = [
     'billing_app',
     'corsheaders',
 ]
-
-# CORS_ALLOWED_ORIGINS = [
-#     'http://*',
-#     'https://*',
-# ]
-# Allow all origins
-
 
 
 # MIDDLEWARE
@@ -185,22 +145,53 @@ if not DEBUG:
 
 
 
+# POSTGRES_USER=POSTGRES_DB_USER
+# POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
+# POSTGRES_DB=POSTGRES_DB_NAME
+
+
+# DATABASES
+# RENDER POSTGRESS
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
+
+
+# #postgres-local-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
+
+# #postgres-docker-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DOCKER_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+# CORS_ALLOWED_ORIGINS = [
+#     'http://*',
+#     'https://*',
+# ]
+# Allow all origins
 
 
 
