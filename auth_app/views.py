@@ -1,5 +1,5 @@
 # users/views.py
-from .utils import send_reset_password_email, send_verification_email
+from .utils import send_reset_password_email, send_verification_email, send_invite_email
 from rest_framework.authentication import SessionAuthentication
 from django.contrib.auth import authenticate, login, logout
 from rest_framework_simplejwt.tokens import RefreshToken

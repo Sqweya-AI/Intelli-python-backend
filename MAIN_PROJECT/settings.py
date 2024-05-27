@@ -28,22 +28,22 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 
 
-# #DEFAULT DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# DATABASES
-# RENDER POSTGRESS
+#DEFAULT DB
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'), #from render postgres
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# # DATABASES
+# # RENDER POSTGRESS
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
 
 
 

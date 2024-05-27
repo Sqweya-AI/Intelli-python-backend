@@ -1,7 +1,10 @@
 # dashboard_app/views.py
+from rest_framework.views import APIView
 from auth_app.models import User
+from auth_app.utils import send_invite_email
 from auth_app.serializers import UserSerializer
 from main_app.models import ReservationModel
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from main_app.serializers import ReservationSerializer
 from .serializers import *
 from .models import *
@@ -273,3 +276,38 @@ class HotelSettingsViewSet(viewsets.ModelViewSet):
     def update_settings(self, request):
         return Response({'message': f'Update Hotel Setting API'})
     
+
+
+class EmployeesView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CsrfExemptSessionAuthentication]
+
+    def get(self, request):
+        company_name = request.user.company_name
+        users = User.objects.filter(role='customer_service', company_name=company_name)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        default_password = '12345Intelli'
+
+        user = User.objects.create_user(
+            email=email,
+            password=default_password,
+            role='customer_service',
+            company_name=request.user.company_name,
+            is_email_verified=False
+        )
+
+        send_invite_email(email, default_password)
+
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
