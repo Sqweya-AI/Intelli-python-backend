@@ -24,7 +24,7 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 class DashboardModelViewSet(viewsets.ModelViewSet):
     queryset = DashboardModel.objects.all()
     serializer_class = DashboardModelSerializer
-    authentication_classes = [CsrfExemptSessionAuthentication] # to disable csrf check
+    authentication_classes = [CsrfExemptSessionAuthentication]
 
     def list(self, request):
         if not request.user.is_authenticated:
@@ -212,7 +212,6 @@ class AgentViewSet(viewsets.ModelViewSet):
     def agents(self, request, pk=None):
         return Response({'message': 'View All Customer Service Agents API'})
 
-
 class UserSettingsViewSet(viewsets.ModelViewSet):
     queryset = UserSettingsModel.objects.all()
     serializer_class = UserSettingsSerializer
@@ -284,12 +283,10 @@ class CreateEmployeeView(views.APIView):
 
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
-            # Create the employee user
             employee = serializer.save()
             employee.set_password(generated_password)
             employee.is_email_verified = True
             employee.save()
-
             # Send invite email
             send_invite_email(employee.email, generated_password)
 
