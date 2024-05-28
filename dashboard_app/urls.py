@@ -27,6 +27,5 @@ router.register(r'user-settings', views.UserSettingsViewSet, basename='user-sett
 router.register(r'hotel-settings', views.HotelSettingsViewSet, basename='hotel-settings')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('create-employee/', views.CreateEmployeeView.as_view(), name='create-employee'),
+    path('', include(router.urls))
 ]

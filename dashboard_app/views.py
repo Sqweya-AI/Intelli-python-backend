@@ -26,13 +26,50 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     serializer_class = DashboardModelSerializer
     authentication_classes = [CsrfExemptSessionAuthentication]
 
-    def list(self, request):
-        if not request.user.is_authenticated:
+    # EMPLOYEES
+    @action(detail=False, methods=['get', 'post'])
+    def employees(self, request):
+        user = request.user
+        if not user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        queryset = User.objects.filter(role='customer_service')
-        serializer = UserSerializer(queryset, many=True) 
-        return Response({"Content":"All registered customer service agents", "The 'AGENTS' list":serializer.data}, status=status.HTTP_200_OK)
-    
+        
+        if user.role != 'manager':
+            return Response({'error': 'Only managers can perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if request.method == 'GET':
+            employees = User.objects.filter(company_name=user.company_name, role='customer_service').order_by('-created_at')
+            serializer = UserSerializer(employees, many=True)
+            return Response({'employees': serializer.data}, status=status.HTTP_200_OK)
+
+        elif request.method == 'POST':
+            email = request.data.get('email')
+            if not email:
+                return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Generate a 6-digit password
+            generated_password = get_random_string(length=6, allowed_chars='0123456789')
+
+            # Prepare the data for creating a new user
+            data = {
+                'username': email,
+                'email': email,
+                'role': 'customer_service',
+                'company_name': user.company_name,
+                'password': generated_password  # Set the generated password here
+            }
+
+            serializer = UserSerializer(data=data)
+            if serializer.is_valid():
+                employee = serializer.save()
+                employee.set_password(generated_password)
+                employee.is_email_verified = True
+                employee.save()
+                # Send invite email
+                send_invite_email(employee.email, generated_password)
+
+                return Response({'message': f'Employee created successfully and invite email sent. password = {generated_password}'}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     # RESERVATIONS
     @action(detail=False, methods=['get'])
     def reservations(self, request):
@@ -234,6 +271,52 @@ class UserSettingsViewSet(viewsets.ModelViewSet):
         return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+# class CreateEmployeeView(views.APIView):
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [CsrfExemptSessionAuthentication]
+
+#     def get(self, request, *args, **kwargs):
+#         if request.user.role != 'manager':
+#             return Response({'error': 'Only managers can view employees.'}, status=status.HTTP_403_FORBIDDEN)
+#         employees = User.objects.filter(company_name=request.user.company_name, role='customer_service').order_by('-created_at')
+#         serializer = UserSerializer(employees, many=True)
+#         return Response({'employees': serializer.data}, status=status.HTTP_200_OK)
+
+#     def post(self, request, *args, **kwargs):
+#         if request.user.role != 'manager':
+#             return Response({'error': 'Only managers can create employees.'}, status=status.HTTP_403_FORBIDDEN)
+
+#         email = request.data.get('email')
+#         if not email:
+#             return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Generate a 6-digit password
+#         generated_password = get_random_string(length=6, allowed_chars='0123456789')
+
+#         # Prepare the data for creating a new user
+#         data = {
+#             'username': email,
+#             'email': email,
+#             'role': 'customer_service',
+#             'company_name': request.user.company_name,
+#             'password': generated_password  # Set the generated password here
+#         }
+
+#         serializer = UserSerializer(data=data)
+#         if serializer.is_valid():
+#             employee = serializer.save()
+#             employee.set_password(generated_password)
+#             employee.is_email_verified = True
+#             employee.save()
+#             # Send invite email
+#             send_invite_email(employee.email, generated_password)
+
+#             return Response({'message': f'Employee created successfully and invite email sent. password = {generated_password}'}, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
 class HotelSettingsViewSet(viewsets.ModelViewSet):
     queryset = HotelSettingsModel.objects.all()
     serializer_class = HotelSettingsSerializer
@@ -246,49 +329,3 @@ class HotelSettingsViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['put'])
     def update_settings(self, request):
         return Response({'message': f'Update Hotel Setting API'})
-    
-
-
-
-class CreateEmployeeView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [CsrfExemptSessionAuthentication]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.role != 'manager':
-            return Response({'error': 'Only managers can view employees.'}, status=status.HTTP_403_FORBIDDEN)
-        employees = User.objects.filter(company_name=request.user.company_name, role='customer_service').order_by('-created_at')
-        serializer = UserSerializer(employees, many=True)
-        return Response({'employees': serializer.data}, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        if request.user.role != 'manager':
-            return Response({'error': 'Only managers can create employees.'}, status=status.HTTP_403_FORBIDDEN)
-
-        email = request.data.get('email')
-        if not email:
-            return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Generate a 6-digit password
-        generated_password = get_random_string(length=6, allowed_chars='0123456789')
-
-        # Prepare the data for creating a new user
-        data = {
-            'username': email,
-            'email': email,
-            'role': 'customer_service',
-            'company_name': request.user.company_name,
-            'password': generated_password  # Set the generated password here
-        }
-
-        serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            employee = serializer.save()
-            employee.set_password(generated_password)
-            employee.is_email_verified = True
-            employee.save()
-            # Send invite email
-            send_invite_email(employee.email, generated_password)
-
-            return Response({'message': f'Employee created successfully and invite email sent. password = {generated_password}'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
