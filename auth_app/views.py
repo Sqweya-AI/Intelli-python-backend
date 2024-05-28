@@ -113,7 +113,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.reset_token = reset_token
             user.reset_token_expiry = token_expiry
             user.save()
-            send_reset_password_email(user.email, str(reset_token))  # Convert UUID to string for sending in the email
+            send_reset_password_email(user.email, str(reset_token))
             return Response({'message': f'Reset link has been sent to your email.', "link": f'https://intelli-python-backend.onrender.com/auth/reset_password/{str(reset_token)}'})
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -126,7 +126,6 @@ class UserViewSet(viewsets.ModelViewSet):
             reset_token = uuid.UUID(reset_token)
             user = User.objects.filter(reset_token=reset_token).first()
         except (User.DoesNotExist, ValueError):
-            # Invalid or expired reset token
             return Response({'error': 'Invalid or expired reset token.', "Reality":"INVALID"}, status=status.HTTP_400_BAD_REQUEST)
         
         if user is not None:
@@ -137,18 +136,14 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.reset_token_used_already = True
                 user.save()
                 return Response({'message': 'Password reset successfully.'}, status=status.HTTP_200_OK)
-            # Reset token has expired
             return Response({'error': 'Reset token has expired.',  "Reality":"EXPIRED"}, status=status.HTTP_400_BAD_REQUEST)
-        # Reset token already used
         return Response({'error': 'Invalid or expired reset token.', "Reality":"USED"}, status=status.HTTP_400_BAD_REQUEST) 
 
     # CHANGE PASSWORD
     @action(detail=False, methods=['post'])
     def change_password(self, request):
-        # Check if user is logged in
         if not request.user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        # Update user's password if old password is correct and user is logged in
         user = request.user
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
@@ -161,7 +156,6 @@ class UserViewSet(viewsets.ModelViewSet):
     # PROFILE
     @action(detail=False, methods=['get'])
     def profile(self, request):
-        # Check if user is logged in
         if not request.user.is_authenticated:
             return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user

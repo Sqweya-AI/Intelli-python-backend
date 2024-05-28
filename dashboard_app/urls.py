@@ -12,5 +12,5 @@ router.register(r'company-settings', HotelSettingsViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('employees/', EmployeesView.as_view(), name='employees'),
+    path('employees/', CreateEmployeeView.as_view(), name='create_employee'),
 ]

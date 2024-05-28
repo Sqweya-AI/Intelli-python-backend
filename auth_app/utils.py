@@ -34,7 +34,7 @@ def send_verification_email(email, verification_code):
     })
 
 
-def send_invite_email(email, default_password):
+def send_invite_email(email, initial_password):
     r = resend.Emails.send({
         "from": "support@medivarse.com",
         "to": email,
@@ -44,7 +44,7 @@ def send_invite_email(email, default_password):
             <p>{'inviter_name'} has invited you to join the customer service team at {'company_name'}.</p>
             <p>Your login details are below:</p>
             <p>Email: {email}</p>
-            <p>Password: <strong>{default_password}</strong></p>
+            <p>Password: <strong>{initial_password}</strong></p>
             <p>Welcome to <strong>Intelli Concierge</strong></p>
         '''
     })

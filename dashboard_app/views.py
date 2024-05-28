@@ -10,11 +10,12 @@ from main_app.serializers import ReservationSerializer
 from .serializers import *
 from .models import *
 from rest_framework.decorators import action
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status,views
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from billing_app.views import BillingViewSet
 from django.db.models import Q
+from django.utils.crypto import get_random_string
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -25,9 +26,9 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     serializer_class = DashboardModelSerializer
     authentication_classes = [CsrfExemptSessionAuthentication] # to disable csrf check
 
-    def list(self, request):#to return the list of customer service agents instead of the default queryset = DashboardModel.objects.all()
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = User.objects.filter(role='customer_service')
         serializer = UserSerializer(queryset, many=True) 
         return Response({"Content":"All registered customer service agents", "The 'AGENTS' list":serializer.data}, status=status.HTTP_200_OK)
@@ -35,74 +36,46 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # RESERVATIONS
     @action(detail=False, methods=['get'])
     def reservations(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        # if user.role in ['manager', 'customer_service']:
-        #     reservations = ReservationSerializer(ReservationModel.objects.all(), many=True).data
-        #     return Response({'message': f'Reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        # return Response({'message': 'You do not have permission to access reservations'}, status=403)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         reservations = ReservationSerializer(ReservationModel.objects.all(), many=True).data
         return Response(reservations)
     
     # FILTER RESERVATIONS
     @action(detail=False, methods=['get'])
     def pending(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        # if user.role in ['manager', 'customer_service']:
-        #     reservations = ReservationSerializer(ReservationModel.objects.filter(status='pending'), many=True).data
-        #     return Response({'message': f'Pending reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        # return Response({'message': 'You do not have permission to access pending reservations'}, status=403)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         reservations = ReservationSerializer(ReservationModel.objects.filter(status='pending'), many=True).data
         return Response(reservations)
     
     @action(detail=False, methods=['get'])
     def confirmed(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        # if user.role in ['manager', 'customer_service']:
-        #     reservations = ReservationSerializer(ReservationModel.objects.filter(status='confirmed'), many=True).data
-        #     return Response({'message': f'Confirmed reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        # return Response({'message': 'You do not have permission to access comfirmed reservations'}, status=403)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         reservations = ReservationSerializer(ReservationModel.objects.filter(status='confirmed'), many=True).data
         return Response(reservations)
     
     @action(detail=False, methods=['get'])
     def rejected(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        user = request.user
-        # if user.role in ['manager', 'customer_service']:
-        #     reservations = ReservationSerializer(ReservationModel.objects.filter(status='rejected'), many=True).data
-        #     return Response({'message': f'Rejected reservations data for BOTH manager & customer service', "reservations":reservations}, status=200)
-        # return Response({'message': 'You do not have permission to access rejected reservations'}, status=403)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         reservations = ReservationSerializer(ReservationModel.objects.filter(status='rejected'), many=True).data
         return Response(reservations)
     
     # OVERVIEW
     @action(detail=False, methods=['get'])
     def overview(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-        # isVerified = request.user.is_email_verified
-        # if request.user.role == 'manager':
-        #     serializer = UserSerializer(request.user)
-        #     return Response({'content': 'HOTEL MANAGER\'S Dashboard', "User Role": serializer.data['role'], "Company email verificado?": "warning OFF (Verified)" if isVerified else "Warning! Not Verified"},status=status.HTTP_200_OK)
-        # if request.user.role == 'customer_service':
-        #     serializer = UserSerializer(request.user)
-        #     return Response({'content': 'Cus-SERVICE AGENT\'S Dashboard', "User Role": serializer.data['role']}, status=status.HTTP_200_OK)
-        # return Response({'message': 'User not allowed to access dashboard overview'}, status=403)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response("OVERVIEW")
     
     
     # SEARCH RESERVATIONS
     @action(detail=False, methods=['get'])
     def search(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         query = request.query_params.get('query', None)
         if not query:
             return Response({'error': 'Search query is missing.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -122,8 +95,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # UPDATE RESERVATION
     @action(detail=False, methods=['post'])
     def update_reservation(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -145,8 +118,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # CONFIRM RESERVATION
     @action(detail=False, methods=['post'])
     def confirm_reservation(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -164,8 +137,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # REJECT RESERVATION
     @action(detail=False, methods=['post'])
     def reject_reservation(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager', 'customer_service']:
             reservation_id = request.data.get('reservation_id', None)
@@ -183,8 +156,8 @@ class DashboardModelViewSet(viewsets.ModelViewSet):
     # DELETE RESERVATION
     @action(detail=False, methods=['post'])
     def delete_reservation(self, request):
-        # if not request.user.is_authenticated:
-            # return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
         user = request.user
         if user.role in ['manager']:
             reservation_id = request.data.get('reservation_id', None)
@@ -251,7 +224,6 @@ class UserSettingsViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user)
         if request.user.is_authenticated:
             return Response({'Data': 'Retrieving Existing Settings Data', "Action": 'User\'s settings UPDATED!', "Account Owner": {"User Email":serializer.data['email'], "User Role":serializer.data['role']}}, status=status.HTTP_200_OK)
-            # return Response({'message': f'View User Setting API for user {pk}'})
         return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
     
     # @action(detail=True, methods=['put']) - user specific
@@ -260,7 +232,6 @@ class UserSettingsViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user)
         if request.user.is_authenticated:
             return Response({'Data': 'Saving Updated Settings Data', "Action": 'User\'s settings UPDATED!', "Account Owner": {"User Email":serializer.data['email'], "User Role":serializer.data['role']}}, status=status.HTTP_200_OK)
-            # return Response({'message': 'Update User Setting API for user {pk}'})
         return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -279,43 +250,47 @@ class HotelSettingsViewSet(viewsets.ModelViewSet):
     
 
 
-class EmployeesView(APIView):
+
+class CreateEmployeeView(views.APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CsrfExemptSessionAuthentication]
 
-    def get(self, request):
-        company_name = request.user.company_name
-        users = User.objects.filter(role='customer_service', company_name=company_name)
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        if request.user.role != 'manager':
+            return Response({'error': 'Only managers can view employees.'}, status=status.HTTP_403_FORBIDDEN)
+        employees = User.objects.filter(company_name=request.user.company_name, role='customer_service')
+        serializer = UserSerializer(employees, many=True)
+        return Response({'employees': serializer.data}, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        if request.user.role != 'manager':
+            return Response({'error': 'Only managers can create employees.'}, status=status.HTTP_403_FORBIDDEN)
+
         email = request.data.get('email')
-
         if not email:
             return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Generate a 6-digit password
+        generated_password = get_random_string(length=6, allowed_chars='0123456789')
 
-        default_password = '12345Intelli'
-        
-        # Ensure unique username
-        base_username = email.split('@')[0]
-        username = base_username
-        while User.objects.filter(username=username).exists():
-            username = base_username + get_random_string(4)
+        # Prepare the data for creating a new user
+        data = {
+            'username': email,
+            'email': email,
+            'role': 'customer_service',
+            'company_name': request.user.company_name,
+            'password': generated_password  # Set the generated password here
+        }
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=default_password,
-            role='customer_service',
-            company_name=request.user.company_name,
-            is_email_verified=False
-        )
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            # Create the employee user
+            employee = serializer.save()
+            employee.set_password(generated_password)
+            employee.save()
 
-        send_invite_email(email, default_password)
+            # Send invite email
+            send_invite_email(employee.email, generated_password)
 
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'message': f'Employee created successfully and invite email sent. password = {generated_password}'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
