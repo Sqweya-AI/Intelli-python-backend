@@ -287,6 +287,7 @@ class CreateEmployeeView(views.APIView):
             # Create the employee user
             employee = serializer.save()
             employee.set_password(generated_password)
+            employee.is_email_verified = True
             employee.save()
 
             # Send invite email
