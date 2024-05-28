@@ -258,7 +258,7 @@ class CreateEmployeeView(views.APIView):
     def get(self, request, *args, **kwargs):
         if request.user.role != 'manager':
             return Response({'error': 'Only managers can view employees.'}, status=status.HTTP_403_FORBIDDEN)
-        employees = User.objects.filter(company_name=request.user.company_name, role='customer_service')
+        employees = User.objects.filter(company_name=request.user.company_name, role='customer_service').order_by('-created_at')
         serializer = UserSerializer(employees, many=True)
         return Response({'employees': serializer.data}, status=status.HTTP_200_OK)
 
