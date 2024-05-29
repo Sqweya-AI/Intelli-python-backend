@@ -44,7 +44,7 @@ class HotelSettingsModel(models.Model):
     company_bio = models.TextField(null=True, blank=True)
     check_in_time = models.CharField(max_length=100, null=True, blank=True)
     check_out_time = models.CharField(max_length=100, null=True, blank=True)
-    manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='manager_field_on_hotel_setting')
+    manager = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='manager_field_on_hotel_setting')
     def __str__(self):
         return f"{self.company_name}' Settings"
     
@@ -54,7 +54,7 @@ class Hotel(models.Model):
     """
     company_name = models.CharField(max_length=255, null=False, blank=False)
     settings = models.ForeignKey(HotelSettingsModel, on_delete=models.CASCADE, related_name='hotel_settings')
-    manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hotel_manager')
+    manager = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='hotel_manager')
     def __str__(self):
         return f"{self.company_name}"
 
