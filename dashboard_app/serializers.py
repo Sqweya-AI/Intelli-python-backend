@@ -17,8 +17,6 @@ class ChannelSerializer(serializers.ModelSerializer):
         model = ContactChannelModel
         fields = '__all__'
 
-
-
 class DashboardModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = DashboardModel
@@ -27,33 +25,12 @@ class DashboardModelSerializer(serializers.ModelSerializer):
 class HotelSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HotelSettingsModel
-        fields = [
-            'hotel_name',
-            'min_advance_booking',
-            'max_advance_booking',
-            'hotel_capacity',
-            'check_in_time',
-            'check_out_time',
-            'hotel_address',
-            'hotel_phone',
-            'hotel_email',
-            'cancellation_policy',
-            'default_currency',
-            'room_types',
-            'accepted_payment_methods',
-            'hotel_amenities'
-        ]
+        fields = '__all__'
+       
 
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettingsModel
-        fields = [
-            'name',
-            'user',
-            'email',
-            'phone',
-            'notification_settings',
-            'user_preferences'
-        ]
+        fields = '__all__'
 
 

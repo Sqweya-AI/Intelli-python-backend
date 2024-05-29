@@ -16,6 +16,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 djoser==2.2.2
+drf-nested-routers==0.94.1
 gunicorn==21.2.0
 h11==0.14.0
 httpcore==1.0.4

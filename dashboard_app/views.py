@@ -16,6 +16,8 @@ from rest_framework.authentication import SessionAuthentication
 from billing_app.views import BillingViewSet
 from django.db.models import Q
 from django.utils.crypto import get_random_string
+from .models import HotelSettingsModel, UserSettingsModel
+from .serializers import HotelSettingsSerializer, UserSettingsSerializer
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -255,37 +257,84 @@ class AgentViewSet(viewsets.ModelViewSet):
     def agents(self, request, pk=None):
         return Response({'message': 'View All Customer Service Agents API'})
 
+
 class UserSettingsViewSet(viewsets.ModelViewSet):
     queryset = UserSettingsModel.objects.all()
     serializer_class = UserSettingsSerializer
-    authentication_classes=[CsrfExemptSessionAuthentication]
-    
-    # @action(detail=True, methods=['get']) - user specific
+    authentication_classes = [CsrfExemptSessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     @action(detail=False, methods=['get'])
-    def view(self, request, pk=None):
-        serializer = UserSerializer(request.user)
+    def view_settings(self, request):
         if request.user.is_authenticated:
-            return Response({'Data': 'Retrieving Existing Settings Data', "Action": 'User\'s settings UPDATED!', "Account Owner": {"User Email":serializer.data['email'], "User Role":serializer.data['role']}}, status=status.HTTP_200_OK)
-        return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    # @action(detail=True, methods=['put']) - user specific
+            serializer = UserSerializer(request.user)
+            return Response({
+                'message': 'Successfully retrieved user settings.',
+                'data': {
+                    'user_email': serializer.data['email'],
+                    'user_role': serializer.data['role']
+                }
+            }, status=status.HTTP_200_OK)
+        return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
+
     @action(detail=False, methods=['put'])
-    def update_settings(self, request, pk=None):
-        serializer = UserSerializer(request.user)
+    def update_settings(self, request):
         if request.user.is_authenticated:
-            return Response({'Data': 'Saving Updated Settings Data', "Action": 'User\'s settings UPDATED!', "Account Owner": {"User Email":serializer.data['email'], "User Role":serializer.data['role']}}, status=status.HTTP_200_OK)
-        return Response({'error': 'User is not logged in.'}, status=status.HTTP_401_UNAUTHORIZED)
+            user = request.user
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'message': 'User settings updated successfully.',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'User is not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class HotelSettingsViewSet(viewsets.ModelViewSet):
     queryset = HotelSettingsModel.objects.all()
     serializer_class = HotelSettingsSerializer
-    authentication_classes=[CsrfExemptSessionAuthentication]
-    
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CsrfExemptSessionAuthentication]
+
     @action(detail=False, methods=['get'])
-    def view(self, request):
-        return Response({'message': f'View Hotel Setting API'})
+    def view_settings(self, request):
+        hotel_settings = self.get_queryset().first()
+        serializer = self.get_serializer(hotel_settings)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['put'])
     def update_settings(self, request):
-        return Response({'message': f'Update Hotel Setting API'})
+        hotel_settings = self.get_queryset().first()
+        serializer = self.get_serializer(hotel_settings, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserSettingsViewSet(viewsets.ModelViewSet):
+    queryset = UserSettingsModel.objects.all()
+    serializer_class = UserSettingsSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CsrfExemptSessionAuthentication]
+
+    def get_object(self):
+        user = self.request.user
+        user_settings, _ = UserSettingsModel.objects.get_or_create(user=user)
+        return user_settings
+
+    @action(detail=False, methods=['get'])
+    def view_settings(self, request):
+        user_settings = self.get_object()
+        serializer = self.get_serializer(user_settings)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['put'])
+    def update_settings(self, request):
+        user_settings = self.get_object()
+        serializer = self.get_serializer(user_settings, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
