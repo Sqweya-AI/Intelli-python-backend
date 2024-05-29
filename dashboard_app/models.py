@@ -2,12 +2,10 @@
 from django.db import models
 from auth_app.models import User
 
-
 class AgentModel(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     email = models.CharField(max_length=100, null=False, blank=False)
     agent_role = models.ForeignKey('AgentRoleModel', on_delete=models.CASCADE, null=False, blank=False)
-
     def __str__(self):
         return f"{self.name} Agent role = {self.agent_role}"
 
@@ -15,20 +13,17 @@ class AgentRoleModel(models.Model):
     role = models.CharField(max_length=100, null=False, blank=False)
     number_of_agents = models.IntegerField(null=False, blank=False)
     description = models.TextField(blank=True, null=True)
-
     def __str__(self):
         return self.role
 
 class ContactChannelModel(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-
     def __str__(self):
         return self.name
 
 class DashboardModel(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
-
     def __str__(self):
         return f'User - {self.user.username} (Manager)'
 
@@ -50,7 +45,6 @@ class HotelSettingsModel(models.Model):
     check_in_time = models.CharField(max_length=100, null=True, blank=True)
     check_out_time = models.CharField(max_length=100, null=True, blank=True)
     manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='manager_field_on_hotel_setting')
-    
     def __str__(self):
         return f"{self.company_name}' Settings"
     
@@ -64,10 +58,6 @@ class Hotel(models.Model):
     def __str__(self):
         return f"{self.company_name}"
 
-
-
-
-
 class UserSettingsModel(models.Model):
     """
     Model to store user settings and preferences.
@@ -77,14 +67,5 @@ class UserSettingsModel(models.Model):
     phone = models.CharField(max_length=20, null=True, blank=True)
     notification_settings = models.JSONField(blank=True, null=True, help_text="JSON field to store notification settings")
     dark_mode_enabled = models.BooleanField(default=False, help_text="Whether the user has enabled dark mode")
-
-    class Meta:
-        verbose_name_plural = "User Settings"
-
     def __str__(self):
         return f"{self.user.email}'s settings"
-
-    def save(self, *args, **kwargs):
-        if not self.email:
-            self.email = self.user.email
-        super().save(*args, **kwargs)
