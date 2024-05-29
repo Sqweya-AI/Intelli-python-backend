@@ -12,15 +12,18 @@ class HomePageView(APIView):
         return Response({"HOME": "home page"})
 
 #Reservation creation and viewing
-@authentication_classes([CsrfExemptSessionAuthentication]) 
+@authentication_classes([CsrfExemptSessionAuthentication])
 class ReservationAPIView(APIView):
     def post(self, request):
-       serializer = ReservationSerializer(data=request.data)
-       if serializer.is_valid():
-          serializer.save()
-          reservation = serializer.data
-          return Response({'message': 'Reservation created successfully', "The reservation":reservation}, status=status.HTTP_201_CREATED)
-       return Response({'error': 'Failed to create reservation', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ReservationSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            reservation = serializer.data
+            return Response({'message': 'Reservation created successfully', "The reservation": reservation}, status=status.HTTP_201_CREATED)
+        else:
+            error_message = serializer.errors.get('non_field_errors', ['An error occurred'])[0]
+            return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
     
 
 #Waitlist joining and viweing
