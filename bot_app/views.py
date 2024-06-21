@@ -1,12 +1,20 @@
 # bot_app/views.py
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, api_view, action
 from rest_framework import status
 from rest_framework.views import APIView
-from .serializers import AnalysisSerializer
+from .serializers import *
 import openai, os
 from dotenv import load_dotenv
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
+from django.http import JsonResponse
+from rest_framework import viewsets
+from .models import ChatHistory
+import requests, json
+from .utils import *
+
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY', None)
@@ -149,3 +157,128 @@ class AnalyseView(APIView):
                     "error": f"Error during analysis: {str(e)}"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class WhatsAppViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    @csrf_exempt
+    @action(detail=False, methods=['post'])
+    def send_message(self, request):
+        data = request.data
+        try:
+            response = send_whatsapp_message(data)
+            response.raise_for_status()  # Raise an exception for HTTP error responses
+            return Response({"status": "success", "message": "Message sent successfully."})
+        except requests.exceptions.HTTPError as http_err:
+            return Response({"status": "failure", "message": f"HTTP error occurred: {http_err}"}, status=response.status_code)
+        except requests.exceptions.RequestException as req_err:
+            return Response({"status": "failure", "message": f"Error occurred: {req_err}"}, status=500)
+        except Exception as err:
+            return Response({"status": "failure", "message": f"An unexpected error occurred: {err}"}, status=500)
+    
+    @csrf_exempt
+    @action(detail=False, methods=['post'])
+    def chat_with_bot(self, request):
+        input_text = request.data.get('input_text')
+        response_text = bot_respond(input_text)
+        return Response({"response": response_text})
+
+
+
+# conversations
+@api_view(['GET'])
+def get_chat_histories(request):
+    chat_histories = ChatHistory.objects.all()
+    serializer = ChatHistorySerializer(chat_histories, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def save_chat_history(request):
+    serializer = ChatHistorySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@csrf_exempt
+def webhook(request):
+    if request.method == 'GET':
+        return verify_webhook_token(request)
+    
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        if 'object' in data and 'entry' in data:
+            if data['object'] == 'whatsapp_business_account':
+                try:
+                    for entry in data['entry']:
+                        changes = entry.get('changes', [])
+                        for change in changes:
+                            value = change.get('value', {})
+                            metadata = value.get('metadata', {})
+                            phoneNumber = metadata.get('display_phone_number')
+                            phoneId = metadata.get('phone_number_id')
+                            
+                            contacts = value.get('contacts', [])
+                            messages = value.get('messages', [])
+                            statuses = value.get('statuses', [])
+
+                            if contacts and messages:
+                                if is_valid_message(messages[0]):
+                                    profileName = contacts[0].get('profile', {}).get('name')
+                                    whatsappId = contacts[0].get('wa_id')
+                                    fromId = messages[0].get('from')
+                                    messageId = messages[0].get('id')
+                                    timestamp = messages[0].get('timestamp')
+                                    textContent = messages[0].get('text', {}).get('body', '')
+
+                                    print('========================================')
+                                    print(f'Message RECEIVED From {fromId}')
+                                    print(f'{textContent}')
+
+                                    bot_response = bot_respond(textContent, phoneNumber, whatsappId)
+
+                                    sendingData = {
+                                        "recipient": fromId,
+                                        "text": bot_response
+                                    }
+                                    send_whatsapp_message(sendingData)
+                                    
+                                    print(f'Reply SENT')
+                                    print(f'{sendingData["text"]}')
+                                    print('========================================')
+                                    print(f'Active convos: {active_conversations}')
+                                    return JsonResponse({'success': True}, status=200)
+
+                            if statuses:
+                                for status in statuses:
+                                    recipientId = status.get('recipient_id')
+                                    messageId = status.get('id')
+                                    messageStatus = status.get('status')
+                                    timestamp = status.get('timestamp')
+                                return JsonResponse({'status_received': True}, status=200)
+
+                except Exception as e:
+                    error_message = f"Error: {str(e)}"
+                    print(error_message)
+                    sendingData = {
+                        "recipient": fromId,
+                        "text": f"An error occurred while processing your request: {error_message}"
+                    }
+                    send_whatsapp_message(sendingData)
+                    print(f'Message sent on WhatsApp: {sendingData["text"]}')
+                    return JsonResponse({'failed': True}, status=500)
+
+        return JsonResponse({'invalid_data': True}, status=400)
+
+    return JsonResponse({'method_not_allowed': True}, status=405)
+
+
+def clean_inactive_conversations(request):
+    try:
+        save_inactive_conversations(request)
+        return JsonResponse({'success': True, 'message': 'Inactive conversations cleaned up.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

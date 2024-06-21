@@ -3,6 +3,8 @@
 from django.urls import path, include
 from rest_framework_nested import routers
 from . import views
+from bot_app.views import webhook, get_chat_histories
+
 
 router = routers.DefaultRouter()
 router.register(r'', views.DashboardModelViewSet, basename='dashboard')
@@ -18,4 +20,5 @@ reservations_router.register(r'reservations', views.DashboardModelViewSet, basen
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(reservations_router.urls)),
+    path('conversations/whatsapp/', get_chat_histories, name='whastapp convos'),
 ]

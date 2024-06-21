@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
+
 #MYSQL
 DB_ENGINE = os.getenv('DB_ENGINE')
 DB_USER = os.getenv('DB_USER')
@@ -17,6 +18,7 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME')
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
+
 
 #POSTGRES
 POSTGRES_DB_ENGINE = os.getenv('POSTGRES_DB_ENGINE')
@@ -85,8 +87,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
+
 ROOT_URLCONF = 'MAIN_PROJECT.urls'
 AUTH_USER_MODEL = 'auth_app.User'
+
 
 TEMPLATES = [
     {
@@ -103,11 +107,14 @@ TEMPLATES = [
         },
     },
 ]
+
+
 WSGI_APPLICATION = 'MAIN_PROJECT.wsgi.application'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     # 'path.to.YourCustomAuthBackend',
 ]
+
 
 EMAIL_BACKEND = 'resend.backend.ResendBackend'
 
@@ -125,6 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -170,6 +178,7 @@ if not DEBUG:
 #     }
 # }
 
+
 # #postgres-docker-db
 # DATABASES = {
 #     'default': {
@@ -183,14 +192,11 @@ if not DEBUG:
 # }
 
 
-
-
 # CORS_ALLOWED_ORIGINS = [
 #     'http://*',
 #     'https://*',
 # ]
 # Allow all origins
-
 
 
 # STORE
