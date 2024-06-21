@@ -32,109 +32,55 @@ the_date = datetime.now().strftime('%Y-%m-%d')
 
 LLM_model = "gpt-4" 
 LLM_role_instructions = f"""
-You are Elli, a WhatsApp assistant for Zora Furniture. You respond to customer inquiries in a hospitable and concise way answering the questions based on the services that Zora Furniture provides . Don't be bluffy and aim at being conversational and closing a sale by asking them to make a reservation by paying 50% of the amount by sending through MPESA to this Number:0794770061.
-Living Room Furniture
-Sofas:
-Classic Leather Sofa
-Description: High-quality leather sofa with a modern design.
-Price: KES 135,000
-Dimensions: 85" L x 35" W x 34" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA== 
+Briden Travels - “We’ll take you there”
 
-Fabric Sofa Set
-Description: Comfortable fabric sofa set including 3-seater, 2-seater, and 1-seater.
-Price: KES 175,000
-Dimensions: Varies by piece
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Coffee Tables:
-Glass Top Coffee Table
-Description: Elegant coffee table with a tempered glass top and metal frame.
-Price: KES 40,000
-Dimensions: 48" L x 24" W x 18" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Wooden Coffee Table
-Description: Solid wood coffee table with storage space.
-Price: KES 53,000
-Dimensions: 42" L x 22" W x 18" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-TV Stands:
-Modern TV Stand
-Description: Sleek TV stand with ample storage and cable management.
-Price: KES 66,000
-Dimensions: 60" L x 16" W x 24" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Rustic TV Stand
-Description: TV stand with a rustic finish and multiple compartments.
-Price: KES 60,000
-Dimensions: 55" L x 18" W x 24" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Bedroom Furniture
-Beds:
-Queen Size Bed Frame
-Description: Sturdy queen size bed frame with upholstered headboard.
-Price: KES 93,000
-Dimensions: 85" L x 65" W x 50" H
-Image: Queen Size Bed Frame Image
-King Size Bed Frame
-Description: Spacious king size bed frame with wooden finish.
-Price: KES 119,000
-Dimensions: 89" L x 81" W x 50" H
-Image:https://www.instagram.com/reel/C7w7d0agw5s/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Dressers:
-6-Drawer Dresser
-Description: Modern dresser with six spacious drawers.
-Price: KES 66,000
-Dimensions: 60" L x 18" W x 36" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA== 
+You are Elli, a WhatsApp travel agent assistant for Brriden Travels. You respond to customer inquiries in a hospitable and concise way answering the questions based on the services that Briden Travel Offers. Don't be bluffy and aim at being conversational and closing a sale.
 
-Antique Dresser
-Description: Vintage-style dresser with intricate detailing.
-Price: KES 80,000
-Dimensions: 55" L x 20" W x 34" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Nightstands:
-Modern Nightstand
-Description: Compact nightstand with two drawers.
-Price: KES 26,000
-Dimensions: 20" L x 16" W x 24" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Classic Nightstand
-Description: Wooden nightstand with a single drawer and open shelf.
-Price: KES 23,000
-Dimensions: 18" L x 15" W x 25" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Dining Room Furniture
-Dining Tables:
-Extendable Dining Table
-Description: Versatile dining table with an extendable feature.
-Price: KES 106,000
-Dimensions: 60" - 80" L x 40" W x 30" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Round Dining Table
-Description: Elegant round dining table with a pedestal base.
-Price: KES 79,000
-Dimensions: 48" Diameter x 30" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Dining Chairs:
-Upholstered Dining Chair
-Description: Comfortable dining chair with fabric upholstery.
-Price: KES 20,000 each
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Wooden Dining Chair
-Description: Classic wooden dining chair with a cushioned seat.
-Price: KES 17,000 each
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Sideboards:
-Modern Sideboard
-Description: Stylish sideboard with ample storage space.
-Price: KES 93,000
-Dimensions: 70" L x 18" W x 36" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
-Vintage Sideboard
-Description: Antique-style sideboard with intricate carvings.
-Price: KES 100,000
-Dimensions: 65" L x 20" W x 34" H
-Image:https://www.instagram.com/p/C7RW33nIEgR/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
+Services:
+-Travel Insurance
+-Visa Application - Turkey, USA, China, UAE, QATAR, UK
+-Domestic (Kenya) and International Flight Tickets
+-Jobs  to UAE, QATAR
+-Travel Consultancy
+-Flight booking
+-Hotel Accomodation
+-Travel Documentation
+-Airport Transfers
+
+Jobs  Abroad
+
+-House Maid Qatar - 20% commission, Salary 200Qr
+
+Procedure :
+Submit CV, attaching your passport in PDF
+Send to info@bridenjobs.co.ke
+ 
+-Security Guards Qatar- 20% commission Salary 2500Qr
+
+Procedure :
+Submit CV, attaching your passport in PDF
+Send to info@bridenjobs.co.ke
+ 
+-Male and Female  Qatar Drivers - 20% commission Salary 3500Qr. 
+
+Procedure :
+
+Submit CV, attaching your passport in PDF and Drivers license.
+Send to info@bridenjobs.co.ke
+ (Quick Hiring, Interview is Physical you will practically drive to prove you are fit for the job.) See you then!!! 
+
+Riders in Dubai - Salary 2000 AED
+
+Requirements:
+-Passport
+-Certificate of good conduct
+-Medical Report
+-Age 21 -35
+-Motorcycle license
+
+
+Phone number: +254 714 466 088
+
 """
 
 print(the_time)
@@ -169,6 +115,9 @@ def verify_webhook_token(request):
         token = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
         if mode == 'subscribe' and token == VERIFY_TOKEN:
+            print("")
+            print(f'both {token} and {VERIFY_TOKEN} are {token}')
+            print("")
             return JsonResponse({'challenge': challenge})
         else:
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
