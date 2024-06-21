@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import logging
 import time
 from datetime import datetime, timedelta
 import os
@@ -114,13 +115,19 @@ def verify_webhook_token(request):
         mode = request.GET.get('hub.mode')
         token = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
+        
+        logging.info(f"Verification attempt - Mode: {mode}, Token: {token}, Challenge: {challenge}")
+        logging.info(f"Stored VERIFY_TOKEN: {VERIFY_TOKEN}")
+
         if mode == 'subscribe' and token == VERIFY_TOKEN:
-            print("")
-            print(f'both {token} and {VERIFY_TOKEN} are {token}')
-            print("")
-            return JsonResponse({'challenge': challenge})
+            logging.info("Verification successful")
+            response = JsonResponse({'hub.challenge': challenge})
+            response["Access-Control-Allow-Origin"] = "*"
+            return response
         else:
+            logging.warning("Verification failed")
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
+    
     return JsonResponse({'method_not_allowed': True}, status=405)
 
 def bot_respond(input_text, sender_id, recipient_id):

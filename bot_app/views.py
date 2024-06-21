@@ -209,10 +209,12 @@ def webhook(request):
         return verify_webhook_token(request)
     
     elif request.method == 'POST':
-        data = json.loads(request.body)
-        if 'object' in data and 'entry' in data:
-            if data['object'] == 'whatsapp_business_account':
-                try:
+        try:
+            data = json.loads(request.body)
+            logging.info(f"Received webhook data: {data}")
+
+            if 'object' in data and 'entry' in data:
+                if data['object'] == 'whatsapp_business_account':
                     for entry in data['entry']:
                         changes = entry.get('changes', [])
                         for change in changes:
@@ -234,9 +236,7 @@ def webhook(request):
                                     timestamp = messages[0].get('timestamp')
                                     textContent = messages[0].get('text', {}).get('body', '')
 
-                                    print('========================================')
-                                    print(f'Message RECEIVED From {fromId}')
-                                    print(f'{textContent}')
+                                    logging.info(f'Message RECEIVED From {fromId}: {textContent}')
 
                                     bot_response = bot_respond(textContent, phoneNumber, whatsappId)
 
@@ -246,10 +246,7 @@ def webhook(request):
                                     }
                                     send_whatsapp_message(sendingData)
                                     
-                                    print(f'Reply SENT')
-                                    print(f'{sendingData["text"]}')
-                                    print('========================================')
-                                    print(f'Active convos: {active_conversations}')
+                                    logging.info(f'Reply SENT: {bot_response}')
                                     return JsonResponse({'success': True}, status=200)
 
                             if statuses:
@@ -258,23 +255,19 @@ def webhook(request):
                                     messageId = status.get('id')
                                     messageStatus = status.get('status')
                                     timestamp = status.get('timestamp')
+                                    logging.info(f'Status update: {messageStatus} for message {messageId}')
                                 return JsonResponse({'status_received': True}, status=200)
 
-                except Exception as e:
-                    error_message = f"Error: {str(e)}"
-                    print(error_message)
-                    sendingData = {
-                        "recipient": fromId,
-                        "text": f"An error occurred while processing your request: {error_message}"
-                    }
-                    send_whatsapp_message(sendingData)
-                    print(f'Message sent on WhatsApp: {sendingData["text"]}')
-                    return JsonResponse({'failed': True}, status=500)
+            return JsonResponse({'invalid_data': True}, status=400)
 
-        return JsonResponse({'invalid_data': True}, status=400)
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON decode error: {str(e)}")
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            logging.error(f"Error processing webhook: {str(e)}")
+            return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'method_not_allowed': True}, status=405)
-
 
 def clean_inactive_conversations(request):
     try:
