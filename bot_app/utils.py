@@ -11,6 +11,7 @@ import requests
 from django.core.cache import cache
 from django.http import JsonResponse
 from .models import ChatHistory
+from django.http import HttpResponse
 
 # Define constants
 INACTIVITY_TIMEOUT = 60*60  # 60 seconds for inactivity check
@@ -121,7 +122,7 @@ def verify_webhook_token(request):
 
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             logging.info("Verification successful")
-            response = JsonResponse({'hub.challenge': challenge})
+            return HttpResponse(challenge, content_type="text/plain")
             response["Access-Control-Allow-Origin"] = "*"
             return response
         else:
