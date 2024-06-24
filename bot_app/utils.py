@@ -119,6 +119,7 @@ def verify_webhook_token(request):
         
         logging.info(f"Verification attempt - Mode: {mode}, Token: {token}, Challenge: {challenge}")
         logging.info(f"Stored VERIFY_TOKEN: {VERIFY_TOKEN}")
+        print (VERIFY_TOKEN)
 
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             logging.info("Verification successful")
