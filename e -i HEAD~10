@@ -1,0 +1,215 @@
+49e2f3b G merge done
+0fec727 G Add .env to .gitignore
+ac68c14 G .Env removed
+a571ee9 G Space removed
+a59ed97 G requirements.txt changed to reflect only the necessary packages
+3941570 G flights function call added 1
+d42e4a5 G flights function call added
+4e409c6 G hello
+1cb019e G models message str to created_at
+47488f5 G fix: saving dashboard message to the whatsapp #1
+a56c942 G fix: saving dashboard message to the whatsapp
+7b05641 G feat: messages coming via channels 3
+f60671a G feat: messages coming via channels 2
+2fc4c5b G feat: messages coming via channels
+5bd881d G feat: messages coming via channels
+4f25d6a G fix: notification base on user_channel identified by phone_number of appservice 1
+6fc9781 G fix: notification base on user_channel identified by phone_number of appservice
+f67d4ca G fix: notification base on user_channel identified by phone_number of appservice
+ffdc1ea G fix: notification base on user_channel
+7973035 G escalate relevants events 3
+54ccd3a G escalate relevants events 2
+0d7fbbd G escalate relevants events 1
+cfa5802 G escalate relevants events
+67e6405 G more information on the push notification.
+3c96727 G notifications display changed on admin dashboard
+3ca986e G sentiment analysis and notifications only escalate issues
+1fbad54 G sentiment analysis and notifications
+80e4bce G feat: escalated event notification test#5.2
+a03ee90 G feat: escalated event notification test#5.1
+2ecbfcf G feat: escalated event notification test#5
+e2f686b G feat: escalated event notification test#4
+83060e1 G feat: escalated event notification test#3
+ee7b52f G feat: escalated event notification test#2
+8a5c697 G feat: escalated event notification test#1
+698d719 G feat: escalated event notification test#0
+8c24306 G feat: escalated event check implemented test#6
+c042297 G feat: escalated event check implemented test#5
+89a9509 G feat: escalated event check implemented test#4
+ab7007e G feat: escalated event check implemented test#3
+82ec056 G feat: escalated event check implemented test#2
+a5b5172 G feat: escalated event check implemented test#1
+44c3e60 G hello
+f48c881 G auditing the double messaging issue 5
+ed69c08 G auditing the double messaging issue 4
+a80f84a G auditing the double messaging issue 3
+c0a8012 G auditing the double messaging issue 2
+201bebe G auditing the double messaging issue 1
+ccc5507 G auditing the double messaging issue
+995ffc5 G fix: displaying the key request.data
+1ef5ca7 G fix: admin dashboard display
+cc94ff2 G fix: answer has default value: wait for my response
+01b6c62 G fix: anwser is accessible in the scope of appservice
+99a7fab G assistant_id retrieve from database
+a1fd854 G App service assistant separated: assistant_id added to appservice model
+88c788d G access_token added to appservice model
+f45e7a2 G phone_number_id rendered dynamically 002
+13da394 G phone_number_id rendered dynamically
+95bfbc6 G Alter unique_together for chatsession (1 constraint(s))
+8c00fe1 G waitlist intelli implemented
+f05928a G waitlist url to intelli_waitlit
+fa59681 G Waitlist is to be saved
+8a8719a G waitlist implemented
+27396bb G app service list endpoint added
+e8065c0 G id added to responses
+f4ee5a8 G chatsession is retrieved will affiliated information
+13b7f17 G assistant vs chat completion 003
+47e87cd G assistant vs chat completion 002
+4edc42d G assistant vs chat completion 001
+918736d G assistant vs chat completion
+8b20173 G thread_id added to chatsession
+c1e28a5 G Auditing sila's sending issues: chat history context limited to 3 lastest
+3f7c25a G Auditing sila's sending issues: return Response 200
+31f76c9 G Auditing sila's sending issues: return HttpResponse 200
+fe164e5 G Auditing sila's sending issues
+f359080 G Hello 001
+9c8f0aa G Hello
+135fbf8 G this is a test
+38cd318 N I dont know what I have fixed
+f3002be N there is no changes we are only pushing for fun
+153dfd9 N display whatsapp sending error
+28c07a6 N Prevent Chat history from returning null/None values from the database to the openAI request
+4be488e N customer name is added to the request
+75b5236 N customer_name added after get_or_create
+32f23f0 N customer_name retrieved and saved
+8662744 N customer_name retrieved
+77b9188 N customer chat history view implemented
+6ade5a6 N send message after takeover implemented and testable
+983c786 N send message after takeover implemented
+6c216c4 N takeover, handover, chatsession history implemented
+a78cb5c N Status requests handle in the try except
+c079707 N Message content null constraint removed (
+1fd3e81 N not null constrainst for customer_number removed
+26475e5 N not null constrainst for customer_number removed
+02d7006 N response is received, logs are crazy
+7621c04 N response is receive, logs are crazy
+63a4dc3 N bug related to tuple from get_or_create function
+5b1e43b N Business, AppService UUID field changed to Charfield
+2009326 N db url updated
+0ce03eb N webhook,post method implemented
+e8c4860 N csrf exempted
+efbae6e N Business, chatsession and message setup
+9f09417 N added new modesl for customer and message
+013b399 N change prompt to from Mendiata to suit East Africa Wild Travels
+aebfad6 N change Elli Prompt to Mendiata Hotel
+ac92948 N change prompt for the whatsapp Assistant
+7e0c49e N remove pywin and related modules
+ff33f98 N update requirements.txt file with gunicorn and other packages
+f180a5b N change Database URL name & hardcode it
+30cd5c8 N api-view updated on webhook(MAIN_PROJECT/views.py) + database setup
+40c6687 N api-view updated on webhook(MAIN_PROJECT/views.py) + database setup
+6b0f0aa N new requirements.txt file
+0008fde N make migrations
+ebfe7b9 N alter requirements.txt file
+1c6288e N Hello una 2
+9ca7ca5 N Hello
+ff14e9d N remove pywin and pywinpty from requirements.txt file
+2385002 N restore version of win32 to 306 and add code to specify application to only win32 platform
+62c2834 N knockdown version of pywin32 from 306 to 304
+77fb746 N update requirements.txt file
+4cae504 N add venv to git ignore
+99b4210 N print log
+5baa912 N plain text response
+4ebafe2 E Delete .dockerignore.
+ebbb477 N facebook webhooks errors fixing
+72584f9 N webhook fix
+bf0aa7b N whatsapp bot added, context furniture shop
+175b7ae N error catching added for reservations with non aligning dates
+2693221 N database migrations fixed
+02e01b7 N database migrations fixed"
+d9c54bd N database reset
+4e0c3a0 N database reset
+3d722ac N settings API fixed
+b4fd987 N settings API fixed
+f8a30ab N settings API modified
+b58ef28 N the dashboard/employees response modified
+e620477 N minor fix on the dashboard
+4b8fda8 N arrangement of employees changed to start with the latest first to the oldest
+0da669e N auto verify email for invited employee added
+920d8d0 N employee adding and invitation done
+99257f1 N employee adding invitations
+e8882c4 N data persistance
+7d11143 N basic invite employee added
+78aff8e N data persistence
+4134837 N code added to the email
+b2090c9 N  email properly set
+ebaae04 N  email properly set
+ba3eed4 N build error fixed
+dd23be1 N build error fixed
+a066acc N reset link added to password link
+9828d88 N set the company name field on registration endpoint
+23ba95d N migrations fixed
+7cf58c3 N fixed missing special_request field for reservations
+60a3bde N check for roles of a logged in user disabled
+beafb71 N check for roles of a logged in user disabled
+144207b N authentication requirements removed from reservations and billing views
+9af6297 N cors allowed for requests from localhosts
+7a0bd98 N cors allowed for requests from localhosts
+2dfdb88 N More end points documentation and payload exaples added to the README file
+b43ef64 N email field on waitlist fixed
+5a9b08f N email field on waitlist fixed
+a58e412 N changed wailtilist model to expect  email_address, company_name
+ae43361 N changed wailtilist model to expect  email_address, company_name
+ea055dc N changed wailtilist model to expect  email_address, company_name
+ffc4c33 N reservation special request and  waitlitst functionality added
+d82a4ad N adjustment to the comfirmed reserv's filter
+1214318 N adjustment to the comfirmed reserv's filter
+9e4e7ae N adjustment to the comfirmed reserv's filter
+dc8873b N allowed hosts set to *
+90b2b56 N filter, search, reject, comfirm, delete reservation functionality added
+8fe9432 N change the date format to accept mm/dd/yyyy
+2174d92 N change the date format to accept mm/dd/yyyy
+488e96b N change the date format to accept mm/dd/yyyy
+14a7605 N change serializer to fit date format
+af5b566 N admin access for superuser with user manager
+38a2e82 N user manager and admin/superuser, with databse (dashboard access) creation ability added
+b43d3d7 N delete reservations, edit/update reservations added
+296a9a2 N delete reservations, edit/update reservations added
+259eeac N order reservations by starting with the latest first
+89430eb N reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+10cb2fb N reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+5703287 N reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+b01b91c N reservation api views added (put, get, delete, post)
+3e4a923 N reservation api views added (put, get, delete, post)
+fc4db91 N reservation api views added (put, get, delete, post)
+be1419b N reservation api views added (put, get, delete, post)
+0384b53 N  render's postgres db selected
+9240f9a N  reservation submission and retrieval from postgress db added
+019538f N  reservation submission and retrieval from postgress db added
+53139bd N  reservation submission and retrieval from postgress db added
+754c0bd N  allowed host to *
+392baba N build sh
+c503f09 N build sh
+f990cff N set for render
+6412d7c N billing model migration
+cef02ae N docker database set up
+8ffea58 N submit card added (subscribe in the billing views)
+a531930 N dash board API's set up
+72ca324 N set up postgress
+7b3ad6b N updated the README
+0d4eb01 N dashboard first views and models added
+ee9232d N logout added
+4544f75 N updated the READ ME
+f279bd2 N deleted the .env
+861994c N Migrations for all files
+b7387f0 N Main Project
+bbb6c22 N create main app
+9e03ba9 N create bot app
+24319b5 N make migrations and migrate auth app
+d1498cb N create auth app
+a2fb5a9 N update git ignore file
+3d9c391 E Update README.md
+e9d5409 E Update README.md
+6c81974 N contexualized the agent prompt
+dd8fc62 N add initial files
+b3f8424 E Initial commit

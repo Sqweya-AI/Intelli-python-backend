@@ -1,0 +1,55 @@
+edit b3f8424 Initial commit
+edit dd8fc62 add initial files
+edit 6c81974 contexualized the agent prompt
+edit e9d5409 Update README.md
+edit 3d9c391 Update README.md
+edit a2fb5a9 update git ignore file
+edit d1498cb create auth app
+edit 24319b5 make migrations and migrate auth app
+edit 9e03ba9 create bot app
+edit bbb6c22 create main app
+edit b7387f0 Main Project
+edit 861994c Migrations for all files
+edit 9ca7ca5 Hello
+edit f279bd2 deleted the .env
+edit 4544f75 updated the READ ME
+edit ee9232d logout added
+edit 0d4eb01 dashboard first views and models added
+edit 7b3ad6b updated the README
+edit 72ca324 set up postgress
+edit a531930 dash board API's set up
+edit 8ffea58 submit card added (subscribe in the billing views)
+edit cef02ae docker database set up
+edit 6412d7c billing model migration
+edit f990cff set for render
+edit c503f09 build sh
+edit 392baba build sh
+edit 754c0bd allowed host to *
+edit 53139bd reservation submission and retrieval from postgress db added
+edit 019538f reservation submission and retrieval from postgress db added
+edit 9240f9a reservation submission and retrieval from postgress db added
+edit 0384b53 render's postgres db selected
+edit be1419b reservation api views added (put, get, delete, post)
+edit fc4db91 reservation api views added (put, get, delete, post)
+edit 3e4a923 reservation api views added (put, get, delete, post)
+edit b01b91c reservation api views added (put, get, delete, post)
+edit 5703287 reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+edit 10cb2fb reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+edit 89430eb reservation api views added (put, get, delete, post, first name and last name in the reservation model)
+edit 259eeac order reservations by starting with the latest first
+edit 296a9a2 delete reservations, edit/update reservations added
+edit b43d3d7 delete reservations, edit/update reservations added
+edit 38a2e82 user manager and admin/superuser, with databse (dashboard access) creation ability added
+edit af5b566 admin access for superuser with user manager
+edit 14a7605 change serializer to fit date format
+edit 488e96b change the date format to accept mm/dd/yyyy
+edit 2174d92 change the date format to accept mm/dd/yyyy
+edit 8fe9432 change the date format to accept mm/dd/yyyy
+edit 90b2b56 filter, search, reject, comfirm, delete reservation functionality added
+edit dc8873b allowed hosts set to *
+edit 9e4e7ae adjustment to the comfirmed reserv's filter
+edit 1214318 adjustment to the comfirmed reserv's filter
+edit d82a4ad adjustment to the comfirmed reserv's filter
+edit ffc4c33 reservation special request and  waitlitst functionality added
+edit ea055dc changed wailtilist model to expect  email_address, company_name
+edit ae43361 changed wailtilist model to expect  email_address, company_name

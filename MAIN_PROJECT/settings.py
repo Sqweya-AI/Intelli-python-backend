@@ -6,20 +6,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DEBUG = True
 
 
 # Custom mySQL 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'chatbotappDB',
+#         'USER': 'root',
+#         'PASSWORD': DB_PASSWORD,
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatbotappDB',
-        'USER': 'root',
-        'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE':  'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
