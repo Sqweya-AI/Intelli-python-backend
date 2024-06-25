@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
+DATABASE_URL_EX = os.getenv('DATABASE_URL_EX')
 
 #MYSQL
 DB_ENGINE = os.getenv('DB_ENGINE')
@@ -30,23 +31,25 @@ POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
 POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
 
 
-# #DEFAULT DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+#DEFAULT DB
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
+
+DATABASES['default'] = dj_database_url.parse(DATABASE_URL_EX)
 
 # DATABASES
 # RENDER POSTGRESS
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'), #from render postgres
-        conn_max_age=600
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
 
 
 # ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
