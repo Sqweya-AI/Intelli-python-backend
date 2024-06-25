@@ -10,7 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
-DATABASE_URL_EX = os.getenv('DATABASE_URL_EX')
+DATABASE_URL = os.getenv('DATABASE_URL')
+
 
 #MYSQL
 DB_ENGINE = os.getenv('DB_ENGINE')
@@ -40,7 +41,7 @@ DATABASES = {
 }
 
 
-DATABASES['default'] = dj_database_url.parse(DATABASE_URL_EX)
+DATABASES['default'] = dj_database_url.parse("postgresql://admin:Tvxdm9jfJgwXb75kTPVe81KOIvDN4bTf@dpg-cpte03jv2p9s7393cmig-a.oregon-postgres.render.com/intelli_db")
 
 # DATABASES
 # RENDER POSTGRESS
