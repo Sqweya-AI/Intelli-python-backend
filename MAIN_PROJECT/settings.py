@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
+DATABASE_URL_EX = os.getenv('DATABASE_URL_EX')
 
 #MYSQL
 DB_ENGINE = os.getenv('DB_ENGINE')
@@ -38,6 +39,8 @@ DATABASES = {
     }
 }
 
+
+DATABASES['default'] = dj_database_url.parse(DATABASE_URL_EX)
 
 # DATABASES
 # RENDER POSTGRESS

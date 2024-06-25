@@ -205,6 +205,7 @@ def save_chat_history(request):
 
 @csrf_exempt
 @api_view(['POST', 'GET'])
+@permission_classes([AllowAny,]) 
 def webhook(request):
     if request.method == 'GET':
         return verify_webhook_token(request)
