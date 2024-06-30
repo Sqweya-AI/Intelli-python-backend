@@ -156,6 +156,10 @@ def save_inactive_conversations(request):
     print('=================================')
     print(whatsapp_message)
     print('=================================')
+    
+def is_valid_message(message):
+    text_content = message.get('text', {}).get('body', '').strip()
+    return bool(text_content)  # Returns True if there's non-empty text content    
 
 # You'll need to set up a way to periodically call save_inactive_conversations
 # This could be done using Django's celery or a custom management command
