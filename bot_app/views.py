@@ -14,7 +14,7 @@ from rest_framework import viewsets
 from .models import ChatHistory
 import requests, json
 from .utils import *
-
+import logging
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY', None)
