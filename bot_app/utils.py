@@ -15,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 # Replace this with your actual Assistant ID
-ASSISTANT_ID = 'YOUR_ASSISTANT_ID'
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 
 # Instantiate OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
