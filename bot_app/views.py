@@ -15,6 +15,7 @@ from .models import ChatHistory
 import requests, json
 from .utils import *
 import logging
+from .utils import send_whatsapp_message, bot_respond, verify_webhook_token, save_inactive_conversations
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY', None)
