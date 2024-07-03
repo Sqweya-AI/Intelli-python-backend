@@ -11,4 +11,5 @@ urlpatterns = [
     path('chat/', include('bot_app.urls')),
     path('', include('main_app.urls')), 
     path('webhook/', webhook, name="verify webhook"),
+    path('appservice/', include('appservice.urls')),
 ]

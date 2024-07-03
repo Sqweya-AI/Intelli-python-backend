@@ -194,6 +194,9 @@ def get_chat_histories(request):
     serializer = ChatHistorySerializer(chat_histories, many=True)
     return Response(serializer.data)
 
+
+
+
 @api_view(['POST'])
 def save_chat_history(request):
     serializer = ChatHistorySerializer(data=request.data)
@@ -203,9 +206,12 @@ def save_chat_history(request):
     return Response(serializer.errors, status=400)
 
 
-@csrf_exempt
+
+
+
 @api_view(['POST', 'GET'])
 @permission_classes([AllowAny,]) 
+@csrf_exempt
 def webhook(request):
     if request.method == 'GET':
         return verify_webhook_token(request)
@@ -270,6 +276,11 @@ def webhook(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'method_not_allowed': True}, status=405)
+
+
+
+
+
 
 def clean_inactive_conversations(request):
     try:
