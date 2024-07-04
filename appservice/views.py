@@ -154,7 +154,7 @@ def webhook(request):
             chat_history = get_chat_history(chatsession=chatsession)
 
             # ai or human logic
-            if chatsession.is_handle_by_human == False:
+            if chatsession.is_handle_by_human == False and content is not None:
                 answer = get_answer_from_model(message=content, chat_history=chat_history)
             
             else:
