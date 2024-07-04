@@ -6,10 +6,10 @@ from business.models import Business
 class AppService(models.Model):
     business         = models.ForeignKey(Business, on_delete=models.SET_NULL, null=True)
     phone_number_id  = models.CharField(max_length=300, unique=True)
-    meta_app_id      = models.CharField(max_length=300, unique=True)
     phone_number     = models.CharField(max_length=300, unique=True)
     app_secret       = models.UUIDField(unique=True)
     created_at       = models.DateTimeField(auto_now_add=True)
+    whatsapp_business_account_id = models.UUIDField(unique=True)
 
 
 
