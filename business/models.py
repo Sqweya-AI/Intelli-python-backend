@@ -6,9 +6,9 @@ from django.db import models
 
 class Business(models.Model):
     name       = models.CharField(max_length=300)
-    slug       = models.SlugField(max_length=300)
+    slug       = models.SlugField(max_length=300, null=True, blank=True)
     owner      = models.EmailField()
-    org_id     = models.UUIDField()
+    org_id     = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
