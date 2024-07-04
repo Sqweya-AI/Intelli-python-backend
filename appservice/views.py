@@ -114,10 +114,35 @@ def webhook(request):
         print(request.data.keys())
         if 'object' in request.data and 'entry' in request.data:
             # business 
-            id              = request.data.get('entry')[0]['id']
-            customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-            print(customer_number)
-            content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
+            # id              = request.data.get('entry')[0]['id']
+            # customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
+            # print(customer_number)
+            # content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
+            entry = request.data.get('entry', [])
+
+            entry_id = None
+            customer_number = None
+            content = None
+
+            if entry:
+                first_entry = entry[0]
+                id = first_entry.get('id', None)
+
+                changes = first_entry.get('changes', [])
+                if changes:
+                    first_change = changes[0]
+                    value = first_change.get('value', {})
+
+                    contacts = value.get('contacts', [])
+                    if contacts:
+                        first_contact = contacts[0]
+                        customer_number = first_contact.get('wa_id', None)
+
+                    messages = value.get('messages', [])
+                    if messages:
+                        first_message = messages[0]
+                        text = first_message.get('text', {})
+                        content = text.get('body', None)
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
 
