@@ -16,8 +16,10 @@ from business.models import Business
 from .utils import get_answer_from_model
 
 import os 
+import json 
 import logging
 import requests 
+
 
 # Define constants
 INACTIVITY_TIMEOUT = 60*60  # 60 seconds for inactivity check
@@ -51,8 +53,8 @@ def send_whatsapp_message(data):
 
     if response.status_code != 200:
         print("WhatsApp failed to send message!")
+        print()
 
-    print('message is sent')
     # return response
 
 
@@ -109,45 +111,47 @@ def webhook(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     elif request.method == 'POST':
+        print(request.data.keys())
+        if 'object' in request.data and 'entry' in request.data:
+            # business 
+            id              = request.data.get('entry')[0]['id']
+            customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
+            print(customer_number)
+            content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
 
-        # business 
-        id              = request.data.get('entry')[0]['id']
-        customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-        content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
+            appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
 
-        appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
+            chatsession, existed = ChatSession.objects.get_or_create(
+                customer_number = customer_number,
+                appservice = appservice,     
+            )
 
-        chatsession, existed = ChatSession.objects.get_or_create(
-            customer_number = customer_number,
-            appservice = appservice,     
-        )
+            chat_history = get_chat_history(chatsession=chatsession)
 
-        chat_history = get_chat_history(chatsession=chatsession)
+            # ai or human logic
+            if chatsession.is_handle_by_human == False:
+                answer = get_answer_from_model(message=content, chat_history=chat_history)
+            
+            else:
+                answer = 'Coucou'
 
-        # ai or human logic
-        if chatsession.is_handle_by_human == False:
-            answer = get_answer_from_model(message=content, chat_history=chat_history)
-        
-        else:
-            answer = 'Coucou'
+            sendingData = {
+                "recipient": customer_number,
+                "text": answer
+            }
 
-        sendingData = {
-            "recipient": customer_number,
-            "text": answer
-        }
+            send_whatsapp_message(sendingData)
 
-        send_whatsapp_message(sendingData)
+            message = Message.objects.create(
+                content = content,
+                answer  = answer,
+                chatsession = chatsession
+            )
 
-        message = Message.objects.create(
-            content = content,
-            answer  = answer,
-            chatsession = chatsession
-        )
+            message.save()
 
-        message.save()
-
-        # print(request.data)
-        return JsonResponse({'result': answer}, status=200)
+            # print(request.data)
+            return JsonResponse({'result': answer}, status=201)
 
 
 
