@@ -60,19 +60,12 @@ def send_whatsapp_message(data):
 
 def get_chat_history(chatsession):
     chat_history = []
-    messages = Message.objects.filter(chatsession=chatsession).all()
+    messages = Message.objects.filter(chatsession=chatsession)
+    print(messages)
     if messages:
         for message in messages:
-            chat_history.append(
-                {
-                    "role" : "system",
-                    "content" : message.answer
-                },
-                {
-                    "role" : "user",
-                    "content" : message.content
-                }
-            )
+            chat_history.append({"role" : "system", "content" : message.answer })
+            chat_history.append({"role" : "user",   "content" : message.content})
     
 
     return chat_history
@@ -124,18 +117,25 @@ def webhook(request):
 
         appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
 
-        chatsession = ChatSession.objects.get_or_create(
+        chatsession, existed = ChatSession.objects.get_or_create(
             customer_number = customer_number,
             appservice = appservice,     
         )
+
         chat_history = get_chat_history(chatsession=chatsession)
 
-        answer = get_answer_from_model(message=content, chat_history=chat_history)
+        # ai or human logic
+        if chatsession.is_handle_by_human == False:
+            answer = get_answer_from_model(message=content, chat_history=chat_history)
+        
+        else:
+            answer = 'Coucou'
 
         sendingData = {
             "recipient": customer_number,
             "text": answer
         }
+
         send_whatsapp_message(sendingData)
 
         message = Message.objects.create(
@@ -154,6 +154,7 @@ def webhook(request):
 
 
 """
+
 {
   "object": "whatsapp_business_account",
   "entry": [
