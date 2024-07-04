@@ -9,7 +9,7 @@ class AppService(models.Model):
     phone_number     = models.CharField(max_length=300, unique=True)
     app_secret       = models.UUIDField(unique=True)
     created_at       = models.DateTimeField(auto_now_add=True)
-    whatsapp_business_account_id = models.UUIDField(unique=True)
+    whatsapp_business_account_id = models.UUIDField(unique=True, null=True)
 
 
 
