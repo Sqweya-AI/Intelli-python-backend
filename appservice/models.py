@@ -13,7 +13,6 @@ class AppService(models.Model):
 
 
 
-
 class ChatSession(models.Model):
     customer_number    = models.CharField(max_length=300, unique=True, null=True, blank=True)
     is_handle_by_human = models.BooleanField(default=False)
@@ -27,8 +26,6 @@ class Message(models.Model):
     content     = models.TextField(null=True, blank=True)
     answer      = models.TextField(null=True, blank=True)
     created_at  = models.DateTimeField(auto_now_add=True)
+    sender      = models.CharField(max_length=20, choices=[('human', 'human'), ('ai', 'ai')], null=True, blank=True)
     chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True)
-
-
-
 

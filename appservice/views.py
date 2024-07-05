@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
 
+from .serializers import ChatSessionSerializer
+
 
 from .models import AppService, ChatSession, Message
 
@@ -21,17 +23,13 @@ import logging
 import requests 
 
 
-# Define constants
-INACTIVITY_TIMEOUT = 60*60  # 60 seconds for inactivity check
-CHECK_INTERVAL     = 60*60  # 60 seconds interval for checking
 
 # Load environment variables
-ACCESS_TOKEN    = os.getenv("ACCESS_TOKEN")
-VERSION         = os.getenv("VERSION")
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+VERSION = os.getenv("VERSION")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-VERIFY_TOKEN    = os.getenv("VERIFY_TOKEN")
-
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
@@ -72,16 +70,7 @@ def get_chat_history(chatsession):
 
     return chat_history
 
-# Define constants
-INACTIVITY_TIMEOUT = 60*60  # 60 seconds for inactivity check
-CHECK_INTERVAL = 60*60  # 60 seconds interval for checking
 
-# Load environment variables
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-VERSION = os.getenv("VERSION")
-PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 
 
@@ -90,10 +79,8 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 @csrf_exempt
 def webhook(request):
     if request.method == 'GET':
-        print(request.GET)
-
-        mode = request.GET.get('hub.mode')
-        token = request.GET.get('hub.verify_token')
+        mode      = request.GET.get('hub.mode')
+        token     = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
 
         print(mode, token, challenge)
@@ -113,6 +100,8 @@ def webhook(request):
     elif request.method == 'POST':
         print(request.data)
         print(request.data.keys())
+
+        # this is from whatsapp
         if 'object' in request.data and 'entry' in request.data:
             # business 
             try:
@@ -121,40 +110,16 @@ def webhook(request):
                 print(customer_number)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
             except Exception as e:
-                status          = request.data.get('entry')[0]['changes'][0]['value']['statuses']
+                status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
                 print(status)
                 return Response(
                     {
                         "message" : status
-                    }
+                    },
+                    status=200
                 )
 
-            # entry_id = None
-            # customer_number = None
-            # content = None
-
-            # if entry:
-            #     first_entry = entry[0]
-            #     id = first_entry.get('id', None)
-
-            #     changes = first_entry.get('changes', [])
-            #     if changes:
-            #         first_change = changes[0]
-            #         value = first_change.get('value', {})
-
-            #         contacts = value.get('contacts', [])
-            #         if contacts:
-            #             first_contact = contacts[0]
-            #             customer_number = first_contact.get('wa_id', None)
-
-            #         messages = value.get('messages', [])
-            #         if messages:
-            #             first_message = messages[0]
-            #             text = first_message.get('text', {})
-            #             content = text.get('body', None)
-
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
-
             chatsession, existed = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
                 appservice = appservice,     
@@ -165,21 +130,18 @@ def webhook(request):
             # ai or human logic
             if chatsession.is_handle_by_human == False and content is not None:
                 answer = get_answer_from_model(message=content, chat_history=chat_history)
-            
-            else:
-                answer = 'Coucou'
+
 
             sendingData = {
                 "recipient": customer_number,
                 "text": answer
             }
-
             send_whatsapp_message(sendingData)
-
             message = Message.objects.create(
-                content = content,
-                answer  = answer,
-                chatsession = chatsession
+                content     = content,
+                answer      = answer,
+                chatsession = chatsession,
+                sender      = 'ai'
             )
 
             message.save()
@@ -187,11 +149,94 @@ def webhook(request):
             # print(request.data)
             return JsonResponse({'result': answer}, status=201)
 
+        else:
+            try:
+                customer_number = request.data.get('customer_number', None)
+                phone_number    = request.data.get('phone_number', None)
+                content         = request.data.get('content', None)
+                answer          = request.data.get('answer', None)
 
+            except Exception as e:
+                print(e)
+
+                
+
+
+def takeover(request):
+    if request.method == 'POST': 
+        phone_number          = request.data.get('phone_number', None)
+        customer_number       = request.data.get('customer_number', None)
+        appservice            = get_object_or_404(AppService, phone_number=phone_number)
+
+        chatsession, existed  = ChatSession.objects.get_or_create(
+            customer_number = customer_number,
+            appservice = appservice
+        )
+
+        chatsession.is_handle_by_human = True 
+        chatsession.save()
+
+        return Response(
+            {
+                'message' : 'You took over the AI Assistant'
+            },
+            status=200
+        )
+
+
+
+def handover(request):
+    if request.method == 'POST': 
+        phone_number          = request.data.get('phone_number', None)
+        customer_number       = request.data.get('customer_number', None)
+        appservice            = get_object_or_404(AppService, phone_number=phone_number)
+
+        chatsession, existed  = ChatSession.objects.get_or_create(
+            customer_number = customer_number,
+            appservice = appservice
+        )
+
+        chatsession.is_handle_by_human = False 
+        chatsession.save()
+
+        return Response(
+            {
+                'message' : 'You hand over the AI Assistant'
+            },
+            status=200
+        )
+
+
+def chatsessions_history(request):
+    phone_number = request.data.get('phone_number')
+    appservice   = get_object_or_404(AppService, phone_number=phone_number)
+    if appservice:
+        chatsession  = ChatSession.objects.filter(appservice=appservice)
+        
+        serializer = ChatSessionSerializer(chatsession, many=True)
+
+        return Response(serializer.data, status=200)
+    
 
 
 
 """
+
+1. takeover endpoint 
+customer_number phone number of the customer 
+phone_number is the business phone number  
+
+
+2. takeover message endpoint 
+customer_number phone number of the customer 
+phone_number is the business phone number  
+content is the customer message 
+answer is the message of the business 
+
+
+3. chatsession history 
+phone_number is the business phone number  
+
 
 {
   "object": "whatsapp_business_account",
