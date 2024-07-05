@@ -158,6 +158,31 @@ def webhook(request):
 
             except Exception as e:
                 print(e)
+            
+            appservice = get_object_or_404(AppService, phone_number=phone_number)
+            chatsession, existed = ChatSession.objects.get_or_create(
+                customer_number = customer_number,
+                appservice = appservice,     
+            )
+
+            chat_history = get_chat_history(chatsession=chatsession)
+
+            sendingData = {
+                "recipient": customer_number,
+                "text": answer
+            }
+            send_whatsapp_message(sendingData)
+            message = Message.objects.create(
+                content     = content,
+                answer      = answer,
+                chatsession = chatsession,
+                sender      = 'human'
+            )
+
+            message.save()
+
+            # print(request.data)
+            return JsonResponse({'result': answer}, status=201)
 
                 
 
