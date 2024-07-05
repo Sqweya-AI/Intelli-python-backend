@@ -24,8 +24,8 @@ class ChatSession(models.Model):
 
 
 class Message(models.Model):
-    content     = models.TextField()
-    answer      = models.TextField()
+    content     = models.TextField(null=True, blank=True)
+    answer      = models.TextField(null=True, blank=True)
     created_at  = models.DateTimeField(auto_now_add=True)
     chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True)
 

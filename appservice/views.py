@@ -111,6 +111,7 @@ def webhook(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     elif request.method == 'POST':
+        print(request.data)
         print(request.data.keys())
         if 'object' in request.data and 'entry' in request.data:
             # business 
