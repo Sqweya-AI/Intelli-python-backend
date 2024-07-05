@@ -115,35 +115,43 @@ def webhook(request):
         print(request.data.keys())
         if 'object' in request.data and 'entry' in request.data:
             # business 
-            # id              = request.data.get('entry')[0]['id']
-            # customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-            # print(customer_number)
-            # content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
-            entry = request.data.get('entry', [])
+            try:
+                id              = request.data.get('entry')[0]['id']
+                customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
+                print(customer_number)
+                content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
+            except Exception as e:
+                status          = request.data.get('entry')[0]['changes'][0]['value']['statuses']
+                print(status)
+                return Response(
+                    {
+                        "message" : status
+                    }
+                )
 
-            entry_id = None
-            customer_number = None
-            content = None
+            # entry_id = None
+            # customer_number = None
+            # content = None
 
-            if entry:
-                first_entry = entry[0]
-                id = first_entry.get('id', None)
+            # if entry:
+            #     first_entry = entry[0]
+            #     id = first_entry.get('id', None)
 
-                changes = first_entry.get('changes', [])
-                if changes:
-                    first_change = changes[0]
-                    value = first_change.get('value', {})
+            #     changes = first_entry.get('changes', [])
+            #     if changes:
+            #         first_change = changes[0]
+            #         value = first_change.get('value', {})
 
-                    contacts = value.get('contacts', [])
-                    if contacts:
-                        first_contact = contacts[0]
-                        customer_number = first_contact.get('wa_id', None)
+            #         contacts = value.get('contacts', [])
+            #         if contacts:
+            #             first_contact = contacts[0]
+            #             customer_number = first_contact.get('wa_id', None)
 
-                    messages = value.get('messages', [])
-                    if messages:
-                        first_message = messages[0]
-                        text = first_message.get('text', {})
-                        content = text.get('body', None)
+            #         messages = value.get('messages', [])
+            #         if messages:
+            #             first_message = messages[0]
+            #             text = first_message.get('text', {})
+            #             content = text.get('body', None)
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
 
@@ -224,5 +232,137 @@ def webhook(request):
     }
   ]
 }
+
+"""
+
+# Meta webhook Request Objects 
+"""
+1. 
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "358127370715582",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15556221967",
+              "phone_number_id": "381738275021314"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Sila"
+                },
+                "wa_id": "254751578687"
+              }
+            ],
+            "messages": [
+              {
+                "from": "254751578687",
+                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAEhggMzk4NTk4QjNCQzMxM0Y0NEQ2RjdDMDNDMzE5RDg2OUQA",
+                "timestamp": "1720179745",
+                "text": {
+                  "body": "Hello"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+
+
+
+2. 
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "358127370715582",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15556221967",
+              "phone_number_id": "381738275021314"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAERgSNURGQjM3QTg1NEUxQUVFMEU0AA==",
+                "status": "sent",
+                "timestamp": "1720179748",
+                "recipient_id": "254751578687",
+                "conversation": {
+                  "id": "0f007f9a9b0874573fb36e961ef0e8bc",
+                  "expiration_timestamp": "1720265640",
+                  "origin": {
+                    "type": "service"
+                  }
+                },
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "CBP",
+                  "category": "service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+
+3. 
+
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "358127370715582",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15556221967",
+              "phone_number_id": "381738275021314"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAERgSNURGQjM3QTg1NEUxQUVFMEU0AA==",
+                "status": "read",
+                "timestamp": "1720179749",
+                "recipient_id": "254751578687",
+                "conversation": {
+                  "id": "0f007f9a9b0874573fb36e961ef0e8bc",
+                  "origin": {
+                    "type": "service"
+                  }
+                },
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "CBP",
+                  "category": "service"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
+
 
 """
