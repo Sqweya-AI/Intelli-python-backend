@@ -186,7 +186,9 @@ def webhook(request):
 
                 
 
-
+@api_view(['POST'])
+@permission_classes([AllowAny,])
+@csrf_exempt
 def takeover(request):
     if request.method == 'POST': 
         phone_number          = request.data.get('phone_number', None)
@@ -209,7 +211,9 @@ def takeover(request):
         )
 
 
-
+@api_view(['POST'])
+@permission_classes([AllowAny,])
+@csrf_exempt
 def handover(request):
     if request.method == 'POST': 
         phone_number          = request.data.get('phone_number', None)
@@ -232,13 +236,15 @@ def handover(request):
         )
 
 
-def chatsessions_history(request):
-    phone_number = request.data.get('phone_number')
+@api_view(['GET'])
+@permission_classes([AllowAny,])
+@csrf_exempt
+def chatsessions_history(request, phone_number):
+    # phone_number = request.data.get('phone_number')
     appservice   = get_object_or_404(AppService, phone_number=phone_number)
     if appservice:
         chatsession  = ChatSession.objects.filter(appservice=appservice)
-        
-        serializer = ChatSessionSerializer(chatsession, many=True)
+        serializer   = ChatSessionSerializer(chatsession, many=True)
 
         return Response(serializer.data, status=200)
     
