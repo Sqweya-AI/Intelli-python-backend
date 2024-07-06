@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
 
-from .serializers import ChatSessionSerializer
+from .serializers import ChatSessionSerializer, MessageSerializer
 
 
 from .models import AppService, ChatSession, Message
@@ -248,6 +248,20 @@ def chatsessions_history(request, phone_number):
 
         return Response(serializer.data, status=200)
     
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny,])
+@csrf_exempt
+def messages_history(request, phone_number, customer_number):
+    appservice   = get_object_or_404(AppService, phone_number=phone_number)
+    if appservice:
+        chatsession  = ChatSession.objects.filter(appservice=appservice).first()
+        messages     = Message.objects.filter(chatsession=chatsession)
+        serializer   = MessageSerializer(messages, many=True)
+
+        return Response(serializer.data)
 
 
 
