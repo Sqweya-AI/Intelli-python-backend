@@ -74,7 +74,7 @@ def get_chat_history(chatsession):
 
 
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt
 def webhook(request):
@@ -107,7 +107,8 @@ def webhook(request):
             try:
                 id              = request.data.get('entry')[0]['id']
                 customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-                print(customer_number)
+                customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                print(customer_name)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
@@ -190,6 +191,10 @@ def webhook(request):
 @permission_classes([AllowAny,])
 @csrf_exempt
 def takeover(request):
+    # {
+    #     "phone_number" : "",
+    #     "customer_number" : ""
+    # }
     if request.method == 'POST': 
         phone_number          = request.data.get('phone_number', None)
         customer_number       = request.data.get('customer_number', None)
@@ -240,7 +245,6 @@ def handover(request):
 @permission_classes([AllowAny,])
 @csrf_exempt
 def chatsessions_history(request, phone_number):
-    # phone_number = request.data.get('phone_number')
     appservice   = get_object_or_404(AppService, phone_number=phone_number)
     if appservice:
         chatsession  = ChatSession.objects.filter(appservice=appservice)
@@ -257,7 +261,7 @@ def chatsessions_history(request, phone_number):
 def messages_history(request, phone_number, customer_number):
     appservice   = get_object_or_404(AppService, phone_number=phone_number)
     if appservice:
-        chatsession  = ChatSession.objects.filter(appservice=appservice).first()
+        chatsession  = ChatSession.objects.filter(appservice=appservice, customer_number=customer_number).first()
         messages     = Message.objects.filter(chatsession=chatsession)
         serializer   = MessageSerializer(messages, many=True)
 

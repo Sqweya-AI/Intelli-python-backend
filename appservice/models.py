@@ -15,6 +15,7 @@ class AppService(models.Model):
 
 class ChatSession(models.Model):
     customer_number    = models.CharField(max_length=300, unique=True, null=True, blank=True)
+    customer_name      = models.CharField(max_length=300, null=True, blank=True)
     is_handle_by_human = models.BooleanField(default=False)
     appservice         = models.ForeignKey(AppService, on_delete=models.SET_NULL, null=True)
     created_at         = models.DateTimeField(auto_now_add=True)
