@@ -122,7 +122,7 @@ def webhook(request):
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             chatsession, existed = ChatSession.objects.get_or_create(
-                customer_number = customer_number,
+                customer_number = customer_number.replace('+', ''),
                 appservice      = appservice,     
             )
 
@@ -156,19 +156,23 @@ def webhook(request):
         else:
             try:
                 customer_number = request.data.get('customer_number', None)
+                customer_name   = request.data.get('customer_name', None)
                 phone_number    = request.data.get('phone_number', None)
                 content         = request.data.get('content', None)
                 answer          = request.data.get('answer', None)
+
 
             except Exception as e:
                 print(e)
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
             chatsession, existed = ChatSession.objects.get_or_create(
-                customer_number = customer_number,
+                customer_number = customer_number.replace('+', ''),
                 appservice = appservice,     
             )
 
+            chatsession.customer_name = customer_name
+            chatsession.save()
             chat_history = get_chat_history(chatsession=chatsession)
 
             sendingData = {
@@ -219,6 +223,7 @@ def takeover(request):
         )
 
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt
@@ -242,6 +247,7 @@ def handover(request):
             },
             status=200
         )
+
 
 
 @api_view(['GET'])
