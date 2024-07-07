@@ -123,7 +123,8 @@ def webhook(request):
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             chatsession, existed = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
-                appservice = appservice,     
+                customer_name   = customer_name,
+                appservice      = appservice,     
             )
 
             chat_history = get_chat_history(chatsession=chatsession)
