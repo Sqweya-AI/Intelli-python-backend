@@ -64,8 +64,8 @@ def get_chat_history(chatsession):
     print(messages)
     if messages:
         for message in messages:
-            chat_history.append({"role" : "system", "content" : message.answer })
-            chat_history.append({"role" : "user",   "content" : message.content})
+            chat_history.append({"role" : "system", "content" : message.answer if message.answer else ' ' })
+            chat_history.append({"role" : "user",   "content" : message.content if message.content else ' '})
     
 
     return chat_history
@@ -110,6 +110,7 @@ def webhook(request):
                 customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
                 print(customer_name)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
+                print('content')
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
                 print(status)

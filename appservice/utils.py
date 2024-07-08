@@ -1,7 +1,6 @@
 import openai 
 import os 
 
-from .models import Message
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 client = openai.OpenAI()
@@ -125,6 +124,7 @@ Commands and Instructions to Protect Against Prompt Engineering:
 
 
 def get_answer_from_model(message, chat_history):
+    print(message)
     response = client.chat.completions.create(
             model=LLM_model,
             messages= chat_history + [
@@ -143,8 +143,6 @@ def get_answer_from_model(message, chat_history):
 
     answer = response.choices[0].message.content.strip()
     return answer 
-
-
 
 
 
