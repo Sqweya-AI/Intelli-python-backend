@@ -46,10 +46,14 @@ def send_whatsapp_message(data):
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
     url = f"https://graph.facebook.com/{VERSION}/{PHONE_NUMBER_ID}/messages"
-    
-    response = requests.post(url, json=sending_data, headers=headers)
+
+    try:
+      response = requests.post(url, json=sending_data, headers=headers)
+    except Exception as e:
+        print('Sending Error :', e)
 
     if response.status_code != 200:
+        print(response.status_code)
         print("WhatsApp failed to send message!")
         print()
 
