@@ -84,3 +84,9 @@ docker-compose.override.yml
 
 
 .venv
+
+*/migrations/*
+
+
+test_debug.py 
+.gitignore

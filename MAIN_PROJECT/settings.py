@@ -41,7 +41,7 @@ DATABASES = {
 }
 
 
-DATABASES['default'] = dj_database_url.parse("postgresql://admin:Tvxdm9jfJgwXb75kTPVe81KOIvDN4bTf@dpg-cpte03jv2p9s7393cmig-a.oregon-postgres.render.com/intelli_db")
+DATABASES['default'] = dj_database_url.parse(os.getenv("DATABASE_URL"))
 
 # DATABASES
 # RENDER POSTGRESS
@@ -74,6 +74,8 @@ INSTALLED_APPS = [
     'dashboard_app',
     'billing_app',
     'corsheaders',
+    'business',
+    'appservice',
 ]
 
 

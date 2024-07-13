@@ -128,6 +128,9 @@ print(the_time)
 
 active_conversations = {}
 
+
+
+
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
     text = data.get("text")
@@ -150,8 +153,12 @@ def send_whatsapp_message(data):
         print("WhatsApp failed to send message!")
     return response
 
+
+
+
 def verify_webhook_token(request):
     if request.method == 'GET':
+        print(request.GET)
         mode = request.GET.get('hub.mode')
         token = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
@@ -170,6 +177,8 @@ def verify_webhook_token(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     return JsonResponse({'method_not_allowed': True}, status=405)
+
+
 
 def bot_respond(input_text, sender_id, recipient_id):
     try:
