@@ -260,5 +260,8 @@ def extract_travel_details(text):
         'origin': origin_match.group(1).strip() if origin_match else None,
         'destination': destination_match.group(1).strip() if destination_match else None,
         'date': extracted_date
-    }    
+    }
+
+    print(f"Extracted travel details: {result}")
+    return result
 
