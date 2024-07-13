@@ -1,4 +1,5 @@
 import openai
+import amadeus
 from amadeus import Client, ResponseError
 import os
 from datetime import datetime, timedelta
