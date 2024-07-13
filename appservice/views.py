@@ -1,26 +1,19 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
-
+from .utils import get_flight_offers, get_airport_code, extract_travel_details
 from .serializers import ChatSessionSerializer, MessageSerializer
-
-
 from .models import AppService, ChatSession, Message
-
 from business.models import Business
-
-
-from .utils import get_answer_from_model
-
+import openai
 import os 
 import json 
 import logging
 import requests 
+
 
 
 
@@ -30,6 +23,9 @@ VERSION = os.getenv("VERSION")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
+
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
+
 
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
@@ -65,13 +61,10 @@ def send_whatsapp_message(data):
 def get_chat_history(chatsession):
     chat_history = []
     messages = Message.objects.filter(chatsession=chatsession)
-    print(messages)
     if messages:
         for message in messages:
-            chat_history.append({"role" : "system", "content" : message.answer if message.answer else ' ' })
-            chat_history.append({"role" : "user",   "content" : message.content if message.content else ' '})
-    
-
+            chat_history.append({"role": "assistant", "content": message.answer if message.answer else ' '})
+            chat_history.append({"role": "user", "content": message.content if message.content else ' '})
     return chat_history
 
 
@@ -105,30 +98,21 @@ def webhook(request):
         print(request.data)
         print(request.data.keys())
 
-        # this is from whatsapp
         if 'object' in request.data and 'entry' in request.data:
-            # business 
+            # WhatsApp message handling
             try:
-                id              = request.data.get('entry')[0]['id']
+                id = request.data.get('entry')[0]['id']
                 customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-                customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                print(customer_name)
-                content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
-                print('content')
+                customer_name = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                content = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
             except Exception as e:
-                status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
-                print(status)
-                return Response(
-                    {
-                        "message" : status
-                    },
-                    status=200
-                )
+                status = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
+                return Response({"message": status}, status=200)
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             chatsession, existed = ChatSession.objects.get_or_create(
-                customer_number = customer_number.replace('+', ''),
-                appservice      = appservice,     
+                customer_number=customer_number.replace('+', ''),
+                appservice=appservice,     
             )
 
             chatsession.customer_name = customer_name
@@ -136,39 +120,83 @@ def webhook(request):
 
             chat_history = get_chat_history(chatsession=chatsession)
 
-            # ai or human logic
+            # AI or human logic
             if chatsession.is_handle_by_human == False and content is not None:
-                answer = get_answer_from_model(message=content, chat_history=chat_history)
+                travel_details = extract_travel_details(content)
+                flight_info = ""
+                if all(travel_details.values()):
+                    flight_offers = get_flight_offers(travel_details['origin'], travel_details['destination'], travel_details['date'])
+                    if flight_offers:
+                        flight_info = "Real-time flight offers:\n" + "\n".join([
+                            f"- {offer['airline']}: {offer['price']} {offer['currency']}"
+                            f"\n  Departure: {offer['departure']}"
+                            f"\n  Arrival: {offer['arrival']}"
+                            f"\n  Duration: {offer['duration']}"
+                            for offer in flight_offers
+                        ])
+                    else:
+                        flight_info = "No flight offers found for the specified route and date."
 
+                enhanced_query = f"{content}\n\nExtracted travel details: {travel_details}\n\nAdditional flight information:\n{flight_info}"
+                
+                thread = openai.beta.threads.create()
+                
+                # Add chat history to the thread
+                for message in chat_history:
+                    openai.beta.threads.messages.create(
+                        thread_id=thread.id,
+                        role=message['role'],
+                        content=message['content']
+                    )
+                
+                # Add the current query
+                openai.beta.threads.messages.create(
+                    thread_id=thread.id,
+                    role="user",
+                    content=enhanced_query
+                )
+                
+                run = openai.beta.threads.runs.create(
+                    thread_id=thread.id,
+                    assistant_id=ASSISTANT_ID
+                )
+                
+                while run.status != 'completed':
+                    run = openai.beta.threads.runs.retrieve(
+                        thread_id=thread.id,
+                        run_id=run.id
+                    )
 
-            sendingData = {
-                "recipient": customer_number,
-                "text": answer
-            }
-            send_whatsapp_message(sendingData)
-            message = Message.objects.create(
-                content     = content,
-                answer      = answer,
-                chatsession = chatsession,
-                sender      = 'ai'
-            )
+                messages = openai.beta.threads.messages.list(thread_id=thread.id)
+                answer = messages.data[0].content[0].text.value
 
-            message.save()
+                sendingData = {
+                    "recipient": customer_number,
+                    "text": answer
+                }
+                send_whatsapp_message(sendingData)
+                message = Message.objects.create(
+                    content=content,
+                    answer=answer,
+                    chatsession=chatsession,
+                    sender='ai'
+                )
+                message.save()
 
-            # print(request.data)
             return JsonResponse({'result': answer}, status=201)
 
         else:
+            # Handling requests from your application (non-WhatsApp requests)
             try:
                 customer_number = request.data.get('customer_number', None)
-                customer_name   = request.data.get('customer_name', None)
-                phone_number    = request.data.get('phone_number', None)
-                content         = request.data.get('content', None)
-                answer          = request.data.get('answer', None)
-
+                customer_name = request.data.get('customer_name', None)
+                phone_number = request.data.get('phone_number', None)
+                content = request.data.get('content', None)
+                answer = request.data.get('answer', None)
 
             except Exception as e:
                 print(e)
+                return JsonResponse({'error': str(e)}, status=400)
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
             chatsession, existed = ChatSession.objects.get_or_create(
@@ -186,15 +214,14 @@ def webhook(request):
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
-                content     = content,
-                answer      = answer,
-                chatsession = chatsession,
-                sender      = 'human'
+                content=content,
+                answer=answer,
+                chatsession=chatsession,
+                sender='human'
             )
 
             message.save()
 
-            # print(request.data)
             return JsonResponse({'result': answer}, status=201)
 
                 
