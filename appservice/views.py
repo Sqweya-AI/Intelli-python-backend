@@ -66,11 +66,6 @@ def get_chat_history(chatsession):
             chat_history.append({"role": "assistant", "content": message.answer if message.answer else ' '})
             chat_history.append({"role": "user", "content": message.content if message.content else ' '})
     return chat_history
-
-
-
-
-
 @api_view(['GET','POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt
@@ -95,6 +90,7 @@ def webhook(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     elif request.method == 'POST':
+        logger.info(f"Received POST data: {request.data}")
         print(request.data)
         print(request.data.keys())
 
@@ -124,7 +120,7 @@ def webhook(request):
             if chatsession.is_handle_by_human == False and content is not None:
                 travel_details = extract_travel_details(content)
                 flight_info = ""
-                if all(travel_details.values()):
+                if travel_details and all(travel_details.values()):
                     flight_offers = get_flight_offers(travel_details['origin'], travel_details['destination'], travel_details['date'])
                     if flight_offers:
                         flight_info = "Real-time flight offers:\n" + "\n".join([
@@ -136,6 +132,8 @@ def webhook(request):
                         ])
                     else:
                         flight_info = "No flight offers found for the specified route and date."
+                else:
+                    flight_info = "Unable to extract complete travel details. Please provide origin, destination, and date."
 
                 enhanced_query = f"{content}\n\nExtracted travel details: {travel_details}\n\nAdditional flight information:\n{flight_info}"
                 
@@ -195,7 +193,7 @@ def webhook(request):
                 answer = request.data.get('answer', None)
 
             except Exception as e:
-                print(e)
+                logger.error(f"Error processing non-WhatsApp request: {str(e)}")
                 return JsonResponse({'error': str(e)}, status=400)
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
@@ -223,6 +221,11 @@ def webhook(request):
             message.save()
 
             return JsonResponse({'result': answer}, status=201)
+
+
+
+
+
 
                 
 
