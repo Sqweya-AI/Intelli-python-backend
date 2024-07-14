@@ -5,6 +5,10 @@ import os
 from datetime import datetime, timedelta
 import json
 import re
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 # Set up OpenAI API key
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -221,9 +225,13 @@ def get_flight_offers(origin, destination, date):
             adults=1,
             max=5  # Limit to 5 offers for brevity
         )
+        logger.info(f"Successfully retrieved flight offers: {response.data}")
         return response.data
     except ResponseError as error:
-        print(f"An error occurred: {error}")
+        logger.error(f"Amadeus API error: {error.response.body}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error in get_flight_offers: {str(e)}")
         return None
     
     
