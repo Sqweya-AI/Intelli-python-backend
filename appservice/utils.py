@@ -226,14 +226,13 @@ def get_flight_offers(origin, destination, date):
             max=5  # Limit to 5 offers for brevity
         )
         logger.info(f"Successfully retrieved flight offers: {response.data}")
-        return response.data
+        return response.result  # Return the entire response
     except ResponseError as error:
-        logger.error(f"Amadeus API error: {error.response.body}")
+        logger.error(f"Amadeus API error: {error}")
         return None
     except Exception as e:
         logger.error(f"Unexpected error in get_flight_offers: {str(e)}")
         return None
-    
     
 def extract_travel_details(text):
     origin_pattern = r'(?:from|ticket from)\s*([\w\s]+?)(?:\s+to|\s*$)'
