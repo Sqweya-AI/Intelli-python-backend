@@ -13,6 +13,8 @@ import os
 import json 
 import logging
 import requests 
+from datetime import datetime, timedelta
+
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +69,7 @@ def get_chat_history(chatsession):
             chat_history.append({"role": "assistant", "content": message.answer if message.answer else ' '})
             chat_history.append({"role": "user", "content": message.content if message.content else ' '})
     return chat_history
+  
 @api_view(['GET','POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt
@@ -122,26 +125,43 @@ def webhook(request):
                 travel_details = extract_travel_details(content)
                 flight_info = ""
                 if travel_details and all(travel_details.values()):
-                    flight_offers = get_flight_offers(travel_details['origin'], travel_details['destination'], travel_details['date'])
-                    if flight_offers:
-                        flight_info = "Real-time flight offers:\n" + "\n".join([
-                            f"- {offer['airline']}: {offer['price']} {offer['currency']}"
-                            f"\n  Departure: {offer['departure']}"
-                            f"\n  Arrival: {offer['arrival']}"
-                            f"\n  Duration: {offer['duration']}"
-                            for offer in flight_offers
-                        ])
-                    else:
-                        flight_info = "No flight offers found for the specified route and date."
-                else:
-                    flight_info = "Unable to extract complete travel details. Please provide origin, destination, and date."
-
-                enhanced_query = f"{content}\n\nExtracted travel details: {travel_details}\n\nAdditional flight information:\n{flight_info}"
-                
-                thread = openai.beta.threads.create()
+                  flight_offers = get_flight_offers(travel_details['origin'], travel_details['destination'], travel_details['date'])
+            if flight_offers and 'data' in flight_offers:
+                flight_info = "Real-time flight offers:\n"
+                for offer in flight_offers['data']:
+                    price = offer['price']['total']
+                    currency = offer['price']['currency']
+                    airline_code = offer['validatingAirlineCodes'][0]
+                    airline = flight_offers['dictionaries']['carriers'].get(airline_code, airline_code)
+                    
+                    departure = datetime.fromisoformat(offer['itineraries'][0]['segments'][0]['departure']['at'])
+                    arrival = datetime.fromisoformat(offer['itineraries'][0]['segments'][-1]['arrival']['at'])
+                    
+                    duration = arrival - departure
+                    hours, remainder = divmod(duration.seconds, 3600)
+                    minutes, _ = divmod(remainder, 60)
+                    
+                    flight_info += (f"- {airline}: {price} {currency}\n"
+                                    f"  Departure: {departure.strftime('%Y-%m-%d %H:%M')}\n"
+                                    f"  Arrival: {arrival.strftime('%Y-%m-%d %H:%M')}\n"
+                                    f"  Duration: {hours}h {minutes}m\n"
+                                    f"  Stops: {len(offer['itineraries'][0]['segments']) - 1}\n\n")
+            else:
+                flight_info = "No flight offers found for the specified route and date."
+        else:
+            missing_info = []
+            if not travel_details['origin']:
+                missing_info.append("origin")
+            if not travel_details['destination']:
+                missing_info.append("destination")
+            if not travel_details['date']:
+                missing_info.append("date")
+            flight_info = f"Unable to search for flights. Missing or invalid information: {', '.join(missing_info)}."
+            enhanced_query = f"{content}\n\nExtracted travel details: {travel_details}\n\nAdditional flight information:\n{flight_info}"
+            thread = openai.beta.threads.create()
                 
                 # Add chat history to the thread
-                for message in chat_history:
+            for message in chat_history:
                     openai.beta.threads.messages.create(
                         thread_id=thread.id,
                         role=message['role'],
@@ -149,42 +169,42 @@ def webhook(request):
                     )
                 
                 # Add the current query
-                openai.beta.threads.messages.create(
+            openai.beta.threads.messages.create(
                     thread_id=thread.id,
                     role="user",
                     content=enhanced_query
                 )
                 
-                run = openai.beta.threads.runs.create(
+            run = openai.beta.threads.runs.create(
                     thread_id=thread.id,
                     assistant_id=ASSISTANT_ID
                 )
                 
-                while run.status != 'completed':
+            while run.status != 'completed':
                     run = openai.beta.threads.runs.retrieve(
                         thread_id=thread.id,
                         run_id=run.id
                     )
 
-                messages = openai.beta.threads.messages.list(thread_id=thread.id)
-                answer = messages.data[0].content[0].text.value
+            messages = openai.beta.threads.messages.list(thread_id=thread.id)
+            answer = messages.data[0].content[0].text.value
 
-                sendingData = {
+            sendingData = {
                     "recipient": customer_number,
                     "text": answer
                 }
-                send_whatsapp_message(sendingData)
-                message = Message.objects.create(
+            send_whatsapp_message(sendingData)
+            message = Message.objects.create(
                     content=content,
                     answer=answer,
                     chatsession=chatsession,
                     sender='ai'
                 )
-                message.save()
+            message.save()
 
             return JsonResponse({'result': answer}, status=201)
 
-        else:
+    else:
             # Handling requests from your application (non-WhatsApp requests)
             try:
                 customer_number = request.data.get('customer_number', None)
