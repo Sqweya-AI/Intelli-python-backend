@@ -174,3 +174,6 @@ class UserViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# this is for verbose
