@@ -18,6 +18,7 @@ class ChatSession(models.Model):
     customer_name      = models.CharField(max_length=300, null=True, blank=True)
     is_handle_by_human = models.BooleanField(default=False)
     appservice         = models.ForeignKey(AppService, on_delete=models.SET_NULL, null=True)
+    thread_id          = models.CharField(max_length=300, null=True, blank=True, unique=True)
     created_at         = models.DateTimeField(auto_now_add=True)
     updated_at         = models.DateTimeField(auto_now=True)
     

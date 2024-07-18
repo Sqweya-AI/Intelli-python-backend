@@ -15,7 +15,7 @@ from .models import AppService, ChatSession, Message
 from business.models import Business
 
 
-from .utils import get_answer_from_model
+from .utils import get_answer_from_model, bot_process
 
 import os 
 import json 
@@ -25,11 +25,14 @@ import requests
 
 
 # Load environment variables
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-VERSION = os.getenv("VERSION")
+ACCESS_TOKEN    = os.getenv("ACCESS_TOKEN")
+VERSION         = os.getenv("VERSION")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
+OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
+VERIFY_TOKEN    = os.getenv("VERIFY_TOKEN")
+ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
+
+
 
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
@@ -138,7 +141,8 @@ def webhook(request):
 
             # ai or human logic
             if chatsession.is_handle_by_human == False and content is not None:
-                answer = get_answer_from_model(message=content, chat_history=chat_history)
+                # answer = get_answer_from_model(message=content, chat_history=chat_history)
+                answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number)
 
 
             sendingData = {
