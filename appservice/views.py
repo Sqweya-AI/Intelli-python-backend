@@ -64,7 +64,7 @@ def send_whatsapp_message(data):
 
 def get_chat_history(chatsession):
     chat_history = []
-    messages = Message.objects.filter(chatsession=chatsession)
+    messages = Message.objects.filter(chatsession=chatsession).order_by('-created_at')[:3]
     print(messages)
     if messages:
         for message in messages:
@@ -103,14 +103,8 @@ def webhook(request):
     
     elif request.method == 'POST':
         print(request.data)
-        print(request.data.keys())
-
         # this is from whatsapp
         if 'object' in request.data and 'entry' in request.data:
-            # business 
-            customer_name = ''
-            customer_number = ''
-
             try:
                 id              = request.data.get('entry')[0]['id']
                 print('id: ',id)
