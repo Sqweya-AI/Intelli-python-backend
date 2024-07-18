@@ -114,16 +114,16 @@ def webhook(request):
                 customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
                 print(customer_name)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
-                print('content')
+                print(content)
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
                 print(status)
-                return Response(
-                    {
-                        "message" : status
-                    },
-                    status=200
-                )
+                # return Response(
+                #     {
+                #         "message" : status
+                #     },
+                #     status=200
+                # )
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             chatsession, existed = ChatSession.objects.get_or_create(
