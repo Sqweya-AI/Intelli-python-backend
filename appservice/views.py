@@ -110,6 +110,7 @@ def webhook(request):
             # business 
             try:
                 id              = request.data.get('entry')[0]['id']
+                print(id)
                 customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
                 customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
                 print(customer_name)
@@ -124,7 +125,7 @@ def webhook(request):
                 #     },
                 #     status=200
                 # )
-
+            print(id)
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             chatsession, existed = ChatSession.objects.get_or_create(
                 customer_number = customer_number.replace('+', ''),
