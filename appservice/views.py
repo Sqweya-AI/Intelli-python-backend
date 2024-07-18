@@ -110,25 +110,22 @@ def webhook(request):
             # business 
             try:
                 id              = request.data.get('entry')[0]['id']
-                print(id)
+                print('id: ',id)
                 customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
+                print('customer_number', customer_number)
                 customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                print(customer_name)
+                print("customer_name", customer_name)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
-                print(content)
+                print("content", content)
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
-                print(status)
-                # return Response(
-                #     {
-                #         "message" : status
-                #     },
-                #     status=200
-                # )
-            print(id)
+                print("status", status)
+
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
+            print('phone_number',appservice.phone_number)
+            print('phone_number_id',appservice.phone_number_id)
             chatsession, existed = ChatSession.objects.get_or_create(
-                customer_number = customer_number.replace('+', ''),
+                customer_number = customer_number,
                 appservice      = appservice,     
             )
 
@@ -173,7 +170,7 @@ def webhook(request):
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
             chatsession, existed = ChatSession.objects.get_or_create(
-                customer_number = customer_number.replace('+', ''),
+                customer_number = customer_number,
                 appservice = appservice,     
             )
 
