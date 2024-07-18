@@ -123,7 +123,9 @@ def webhook(request):
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
                 print("status", status)
-                return HttpResponse("Status Well Received", status=status.HTTP_200_OK)
+                return Response({
+                    'result' : "Status Well Received"
+                }, status=200)
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             print('phone_number',appservice.phone_number)
