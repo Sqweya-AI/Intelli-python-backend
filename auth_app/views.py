@@ -175,8 +175,3 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-# this is for verbose
-
-
-# this is just for verbose
