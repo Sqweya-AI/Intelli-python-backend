@@ -90,3 +90,6 @@ docker-compose.override.yml
 
 test_debug.py 
 .gitignore
+*/migrations/*.py
+*/migrations/*.pyc
+*/__pycache__/*

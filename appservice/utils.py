@@ -1,8 +1,10 @@
 import openai 
 import os 
+import time 
 
-
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key  = os.getenv('OPENAI_API_KEY')
+ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
+ 
 client = openai.OpenAI()
 
 LLM_model = "gpt-4" 
@@ -121,7 +123,7 @@ Commands and Instructions to Protect Against Prompt Engineering:
 
 """
 
-
+from appservice.models import ChatSession, AppService
 
 def get_answer_from_model(message, chat_history):
     print(message)
@@ -146,3 +148,57 @@ def get_answer_from_model(message, chat_history):
 
 
 
+
+def bot_process(input_text, appservice, recipient_id):
+    # thread_id = cache.get(f'thread_{sender_id}_{recipient_id}')
+    
+    chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
+
+
+    try:
+        thread_id   = chatsession.thread_id 
+
+        if len(thread_id) < 2:
+            thread = client.beta.threads.create()
+            thread_id = thread.id
+
+            chatsession.thread_id = thread_id
+            chatsession.save()
+
+            # cache.set(f'thread_{sender_id}_{recipient_id}', thread_id, timeout=None)
+
+        # Add the user's message to the thread
+        client.beta.threads.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=input_text
+        )
+
+        # Run the Assistant
+        run = client.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=ASSISTANT_ID
+        )
+
+        # Wait for the run to complete
+        while run.status not in ["completed", "failed", "expired"]:
+            time.sleep(1)
+            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+
+        if run.status != "completed":
+            return f"Sorry, there was an issue processing your request. Status: {run.status}"
+
+        # Retrieve the assistant's response
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
+        assistant_response = messages.data[0].content[0].text.value
+
+        # Save chat history
+        # save_chat_history(sender_id, recipient_id, [
+        #     {"role": "user", "content": input_text},
+        #     {"role": "assistant", "content": assistant_response}
+        # ])
+
+        return assistant_response
+
+    except Exception as e:
+        return f"Error generating bot response: {e}"
