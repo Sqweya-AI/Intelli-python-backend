@@ -158,7 +158,7 @@ def bot_process(input_text, appservice, recipient_id):
     try:
         thread_id   = chatsession.thread_id 
 
-        if len(thread_id) < 2:
+        if thread_id is None:
             thread = client.beta.threads.create()
             thread_id = thread.id
 
@@ -198,7 +198,9 @@ def bot_process(input_text, appservice, recipient_id):
         #     {"role": "assistant", "content": assistant_response}
         # ])
 
+        print(assistant_response)
         return assistant_response
 
+
     except Exception as e:
-        return f"Error generating bot response: {e}"
+        return None
