@@ -151,14 +151,17 @@ def get_answer_from_model(message, chat_history):
 
 def bot_process(input_text, appservice, recipient_id):
     # thread_id = cache.get(f'thread_{sender_id}_{recipient_id}')
+    print("input_text: ",input_text)
     
     chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
 
+    print(chatsession)
+    thread_id   = chatsession.thread_id 
 
+    print("thread_id", thread_id)
     try:
-        thread_id   = chatsession.thread_id 
 
-        if thread_id is None:
+        if not thread_id:
             thread = client.beta.threads.create()
             thread_id = thread.id
 
