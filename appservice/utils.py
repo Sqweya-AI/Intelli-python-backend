@@ -169,9 +169,9 @@ def bot_process(input_text, appservice, recipient_id):
 
         # Add the user's message to the thread
         client.beta.threads.messages.create(
-            thread_id=thread_id,
-            role="user",
-            content=input_text
+            thread_id = thread_id,
+            role      = "user",
+            content   = input_text
         )
 
         # Run the Assistant

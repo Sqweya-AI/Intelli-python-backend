@@ -37,6 +37,8 @@ ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
     text = data.get("text")
+
+    print('Le text a envoyé: ',text)
     sending_data = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
@@ -141,11 +143,12 @@ def webhook(request):
             if chatsession.is_handle_by_human == False and content is not None:
                 # answer = get_answer_from_model(message=content, chat_history=chat_history)
                 answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number)
+                print('answer from model: ',answer)
 
 
             sendingData = {
                 "recipient": customer_number,
-                "text": answer
+                "text": answer if answer else 'Wait for my response..'
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
