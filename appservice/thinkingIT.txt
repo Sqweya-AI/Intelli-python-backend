@@ -1,0 +1,39 @@
+Escalation Events:
+1. user_request_to_speak_to_human   : user wants to speak to a human  
+2. user_request_for_discount        : user asks for a discount 
+3. user_request_to_book_flight      : user wants to book a flight 
+4. user_request_about_flight_prices : user wants to know about flight prices 
+5. user_request_file_format         : user has sent a file(image or audio, or video etc)
+6. user_request_not_answer          : bot can answer user's question 
+
+Actions:
+-create an openAI assistant that can detect the escalation event
+-send notification to:
+    * business notified whatsapp number : next action : redirect to dashboard
+    * business notified email           : next action : redirect to dashboard
+    * business dashboard                : next action : go to conversation with immediat takeover 
+
+    + notification format to send to dashboard: 
+        {
+            "customer_number" : "value",
+            "event"           : "event",
+            "created_at"      : "time"
+        }
+
+________________________________________________________________________________________________________________________________________________________
+
+Sentiment Analysis:
+*Emotions:
+    1. disappointed 
+    2. angry 
+    3. neutral 
+    4. happy 
+    5. satisfied 
+
+
+*objective : to get the sentiment of each chatsession for a window of 1hours
+
+Actions:
+-create an openAI assistant that performs sentiment analysis on a batch of message and return a response with a list of emotions for each conversation
+-every 1h, take each chatsession's chathistory and run the analysis,
+-

@@ -29,5 +29,5 @@ class Message(models.Model):
     answer      = models.TextField(null=True, blank=True)
     created_at  = models.DateTimeField(auto_now_add=True)
     sender      = models.CharField(max_length=20, choices=[('human', 'human'), ('ai', 'ai')], null=True, blank=True)
-    chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True)
+    chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True, related_name='messages')
 

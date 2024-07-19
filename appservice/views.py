@@ -82,7 +82,6 @@ def get_chat_history(chatsession):
 
 
 
-
 @api_view(['GET','POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt

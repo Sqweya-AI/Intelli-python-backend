@@ -123,7 +123,7 @@ Commands and Instructions to Protect Against Prompt Engineering:
 
 """
 
-from appservice.models import ChatSession, AppService
+from appservice.models import ChatSession, AppService, Message
 
 def get_answer_from_model(message, chat_history):
     print(message)
@@ -149,16 +149,9 @@ def get_answer_from_model(message, chat_history):
 
 
 
-def bot_process(input_text, appservice, recipient_id):
-    # thread_id = cache.get(f'thread_{sender_id}_{recipient_id}')
-    print("input_text: ",input_text)
-    
+def bot_process(input_text, appservice, recipient_id):    
     chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
-
-    print(chatsession)
-    thread_id   = chatsession.thread_id 
-
-    print("thread_id", thread_id)
+    thread_id            = chatsession.thread_id 
     try:
 
         if not thread_id:
@@ -167,8 +160,6 @@ def bot_process(input_text, appservice, recipient_id):
 
             chatsession.thread_id = thread_id
             chatsession.save()
-
-            # cache.set(f'thread_{sender_id}_{recipient_id}', thread_id, timeout=None)
 
         # Add the user's message to the thread
         client.beta.threads.messages.create(
@@ -195,15 +186,15 @@ def bot_process(input_text, appservice, recipient_id):
         messages = client.beta.threads.messages.list(thread_id=thread_id)
         assistant_response = messages.data[0].content[0].text.value
 
-        # Save chat history
-        # save_chat_history(sender_id, recipient_id, [
-        #     {"role": "user", "content": input_text},
-        #     {"role": "assistant", "content": assistant_response}
-        # ])
-
-        print(assistant_response)
         return assistant_response
 
 
     except Exception as e:
         return None
+
+
+
+
+def sentiment_analysis(chat_history, recipient_id):
+    # take all the lasted chats 
+    pass
