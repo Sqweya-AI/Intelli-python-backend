@@ -7,14 +7,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
 
-from .serializers import ChatSessionSerializer, MessageSerializer
-
-
+from .serializers import ChatSessionSerializer, MessageSerializer, AppServiceSerializer
 from .models import AppService, ChatSession, Message
-
 from business.models import Business
-
-
 from .utils import get_answer_from_model, bot_process
 
 import os 
@@ -213,14 +208,15 @@ def takeover(request):
     # }
     if request.method == 'POST': 
         phone_number          = request.data.get('phone_number', None)
+        phone_number          = phone_number.strip()
         customer_number       = request.data.get('customer_number', None)
         appservice            = get_object_or_404(AppService, phone_number=phone_number)
 
-        chatsession, existed  = ChatSession.objects.get_or_create(
+        chatsession  = ChatSession.objects.filter(
             customer_number = customer_number,
             appservice = appservice
-        )
-
+        ).first()
+      
         chatsession.is_handle_by_human = True 
         chatsession.save()
 
@@ -285,6 +281,19 @@ def messages_history(request, phone_number, customer_number):
 
         return Response(serializer.data)
 
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny,])
+@csrf_exempt
+def appservices_list(request, owner):
+    owner = owner.strip()
+    business = get_object_or_404(Business, owner=owner)
+    if business:
+        appservices = AppService.objects.filter(business=business)
+        serializer  = AppServiceSerializer(appservices, many=True)
+        return Response(serializer.data, status=200)
+    
 
 
 """

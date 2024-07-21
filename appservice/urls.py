@@ -9,4 +9,5 @@ urlpatterns = [
     path('conversations/whatsapp/send_message/', webhook),
     path('conversations/whatsapp/takeover_conversation/', takeover),
     path('conversations/whatsapp/handover_conversation/', handover),
+    path('list/<str:owner>/', appservices_list),
 ]
