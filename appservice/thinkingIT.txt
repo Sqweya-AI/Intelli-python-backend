@@ -5,13 +5,14 @@ Escalation Events:
 4. user_request_about_flight_prices : user wants to know about flight prices 
 5. user_request_file_format         : user has sent a file(image or audio, or video etc)
 6. user_request_not_answer          : bot can answer user's question 
+7. user_request_no_alert            : there is no escalation event for this message 
 
 Actions:
 -create an openAI assistant that can detect the escalation event
 -send notification to:
     * business notified whatsapp number : next action : redirect to dashboard
     * business notified email           : next action : redirect to dashboard
-    * business dashboard                : next action : go to conversation with immediat takeover 
+    * business dashboard                : next action : go to conversation with immediate takeover 
 
     + notification format to send to dashboard: 
         {

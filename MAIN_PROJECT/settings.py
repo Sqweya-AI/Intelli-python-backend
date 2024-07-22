@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'business',
     'appservice',
+    'waitlist',
 ]
 
 
