@@ -1,14 +1,10 @@
 from rest_framework import serializers
-from .models import Waitlist
+from .models import IntelliWaitList
 
-# class WaitlistSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Waitlist
-#         fields = ['id', 'email_address', 'company_name', 'phone_number']
+class IntelliWaitListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IntelliWaitList
+        fields = ['id', 'phone_number', 'company_name', 'email_address']
 
-
-
-class WaitListSerializer(serializers.Serializer):
-    email_address = serializers.CharField()
-    company_name  = serializers.CharField()
-    phone_number  = serializers.CharField()
+    
+    

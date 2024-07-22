@@ -1,8 +1,9 @@
 from django.db import models
 
+# Create your models here.
 
-class Waitlist(models.Model):
-    email_address = models.EmailField(max_length=255)
-    company_name  = models.CharField(max_length=255)
-    phone_number  = models.CharField(max_length=255)
 
+class IntelliWaitList(models.Model):
+    company_name  = models.CharField(max_length=300)
+    email_address = models.EmailField(unique=True)
+    phone_number  = models.CharField(max_length=300)
