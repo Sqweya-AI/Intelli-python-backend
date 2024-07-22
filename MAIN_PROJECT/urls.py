@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 from bot_app.views import webhook, get_chat_histories
 
-from waitlist.views import waitlist_create
+from waitlist.views import waitlist_create, waitlist_delete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,5 +13,6 @@ urlpatterns = [
     path('', include('main_app.urls')), 
     path('webhook/', webhook, name="verify webhook"),
     path('appservice/', include('appservice.urls')),
-    path('waitlist/', waitlist_create),
+    path('intelli_waitlist/', waitlist_create),
+    path('delete/',waitlist_delete),
 ]
