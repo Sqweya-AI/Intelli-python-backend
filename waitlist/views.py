@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.parsers import JSONParser
 
 
 from django.views.decorators.csrf import csrf_exempt
@@ -17,11 +18,13 @@ from .models import Waitlist
 def waitlist_create(request):
     if request.method == 'GET':
         waitlist = Waitlist.objects.all()
+        print(waitlist)
         serializer = WaitlistSerializer(waitlist, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
     
     elif request.method == 'POST':
-        serializer = WaitlistSerializer(data=request.data)
+        data = JSONParser().parse(request)
+        serializer = WaitlistSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
         
