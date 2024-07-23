@@ -32,6 +32,7 @@ ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
 def send_whatsapp_message(data):
     recipient = data.get("recipient")
     text = data.get("text")
+    phone_number_id = data.get('phone_number_id')
 
     print('Le text a envoyé: ',text)
     sending_data = {
@@ -45,7 +46,7 @@ def send_whatsapp_message(data):
         "Content-type": "application/json",
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
-    url = f"https://graph.facebook.com/{VERSION}/{PHONE_NUMBER_ID}/messages"
+    url = f"https://graph.facebook.com/{VERSION}/{phone_number_id}/messages"
 
     try:
       response = requests.post(url, json=sending_data, headers=headers)
@@ -181,7 +182,8 @@ def webhook(request):
 
             sendingData = {
                 "recipient": customer_number,
-                "text": answer
+                "text": answer,
+                "phone_number_id" : appservice.phone_number_id
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
@@ -295,195 +297,3 @@ def appservices_list(request, owner):
         return Response(serializer.data, status=200)
     
 
-
-"""
-
-1. takeover endpoint 
-customer_number phone number of the customer 
-phone_number is the business phone number  
-
-
-2. takeover message endpoint 
-customer_number phone number of the customer 
-phone_number is the business phone number  
-content is the customer message 
-answer is the message of the business 
-
-
-3. chatsession history 
-phone_number is the business phone number  
-
-
-{
-  "object": "whatsapp_business_account",
-  "entry": [
-    {
-      "id": "358127370715582",
-      "changes": [
-        {
-          "value": {
-            "messaging_product": "whatsapp",
-            "metadata": {
-              "display_phone_number": "15556221967",
-              "phone_number_id": "381738275021314"
-            },
-            "contacts": [
-              {
-                "profile": {
-                  "name": "Sila"
-                },
-                "wa_id": "254751578687"
-              }
-            ],
-            "messages": [
-              {
-                "from": "254751578687",
-                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAEhgWM0VCMDg0NzYzMTExNDUyQURDNjRGRQA=",
-                "timestamp": "1720051785",
-                "text": {
-                  "body": "y"
-                },
-                "type": "text"
-              }
-            ]
-          },
-          "field": "messages"
-        }
-      ]
-    }
-  ]
-}
-
-"""
-
-# Meta webhook Request Objects 
-"""
-1. 
-{
-  "object": "whatsapp_business_account",
-  "entry": [
-    {
-      "id": "358127370715582",
-      "changes": [
-        {
-          "value": {
-            "messaging_product": "whatsapp",
-            "metadata": {
-              "display_phone_number": "15556221967",
-              "phone_number_id": "381738275021314"
-            },
-            "contacts": [
-              {
-                "profile": {
-                  "name": "Sila"
-                },
-                "wa_id": "254751578687"
-              }
-            ],
-            "messages": [
-              {
-                "from": "254751578687",
-                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAEhggMzk4NTk4QjNCQzMxM0Y0NEQ2RjdDMDNDMzE5RDg2OUQA",
-                "timestamp": "1720179745",
-                "text": {
-                  "body": "Hello"
-                },
-                "type": "text"
-              }
-            ]
-          },
-          "field": "messages"
-        }
-      ]
-    }
-  ]
-}
-
-
-
-2. 
-{
-  "object": "whatsapp_business_account",
-  "entry": [
-    {
-      "id": "358127370715582",
-      "changes": [
-        {
-          "value": {
-            "messaging_product": "whatsapp",
-            "metadata": {
-              "display_phone_number": "15556221967",
-              "phone_number_id": "381738275021314"
-            },
-            "statuses": [
-              {
-                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAERgSNURGQjM3QTg1NEUxQUVFMEU0AA==",
-                "status": "sent",
-                "timestamp": "1720179748",
-                "recipient_id": "254751578687",
-                "conversation": {
-                  "id": "0f007f9a9b0874573fb36e961ef0e8bc",
-                  "expiration_timestamp": "1720265640",
-                  "origin": {
-                    "type": "service"
-                  }
-                },
-                "pricing": {
-                  "billable": true,
-                  "pricing_model": "CBP",
-                  "category": "service"
-                }
-              }
-            ]
-          },
-          "field": "messages"
-        }
-      ]
-    }
-  ]
-}
-
-3. 
-
-{
-  "object": "whatsapp_business_account",
-  "entry": [
-    {
-      "id": "358127370715582",
-      "changes": [
-        {
-          "value": {
-            "messaging_product": "whatsapp",
-            "metadata": {
-              "display_phone_number": "15556221967",
-              "phone_number_id": "381738275021314"
-            },
-            "statuses": [
-              {
-                "id": "wamid.HBgMMjU0NzUxNTc4Njg3FQIAERgSNURGQjM3QTg1NEUxQUVFMEU0AA==",
-                "status": "read",
-                "timestamp": "1720179749",
-                "recipient_id": "254751578687",
-                "conversation": {
-                  "id": "0f007f9a9b0874573fb36e961ef0e8bc",
-                  "origin": {
-                    "type": "service"
-                  }
-                },
-                "pricing": {
-                  "billable": true,
-                  "pricing_model": "CBP",
-                  "category": "service"
-                }
-              }
-            ]
-          },
-          "field": "messages"
-        }
-      ]
-    }
-  ]
-}
-
-
-"""
