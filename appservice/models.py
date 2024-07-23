@@ -14,7 +14,7 @@ class AppService(models.Model):
 
 
 class ChatSession(models.Model):
-    customer_number    = models.CharField(max_length=300, unique=True, null=True, blank=True)
+    customer_number    = models.CharField(max_length=300, null=True, blank=True)
     customer_name      = models.CharField(max_length=300, null=True, blank=True)
     is_handle_by_human = models.BooleanField(default=False)
     appservice         = models.ForeignKey(AppService, on_delete=models.SET_NULL, null=True, related_name='chatsessions')
@@ -22,7 +22,8 @@ class ChatSession(models.Model):
     created_at         = models.DateTimeField(auto_now_add=True)
     updated_at         = models.DateTimeField(auto_now=True)
     
-
+    class Meta:
+        unique_together = ['customer_number', 'appservice']
 
 class Message(models.Model):
     content     = models.TextField(null=True, blank=True)

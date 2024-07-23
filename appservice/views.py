@@ -123,7 +123,7 @@ def webhook(request):
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
             print('phone_number',appservice.phone_number)
             print('phone_number_id',appservice.phone_number_id)
-            chatsession, existed = ChatSession.objects.get_or_create(
+            chatsession, created = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
                 appservice      = appservice,     
             )
@@ -170,7 +170,7 @@ def webhook(request):
                 print(e)
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
-            chatsession, existed = ChatSession.objects.get_or_create(
+            chatsession, created = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
                 appservice = appservice,     
             )
@@ -238,7 +238,7 @@ def handover(request):
         customer_number       = request.data.get('customer_number', None)
         appservice            = get_object_or_404(AppService, phone_number=phone_number)
 
-        chatsession, existed  = ChatSession.objects.get_or_create(
+        chatsession, created  = ChatSession.objects.get_or_create(
             customer_number = customer_number,
             appservice = appservice
         )
