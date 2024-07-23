@@ -171,7 +171,7 @@ def bot_process(input_text, appservice, recipient_id):
         # Run the Assistant
         run = client.beta.threads.runs.create(
             thread_id=thread_id,
-            assistant_id=ASSISTANT_ID
+            assistant_id=appservice.assistant_id
         )
 
         # Wait for the run to complete
