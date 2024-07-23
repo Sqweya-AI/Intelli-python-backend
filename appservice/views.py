@@ -33,6 +33,7 @@ def send_whatsapp_message(data):
     recipient = data.get("recipient")
     text = data.get("text")
     phone_number_id = data.get('phone_number_id')
+    access_token    = data.get('access_token')
 
     print('Le text a envoyé: ',text)
     sending_data = {
@@ -44,7 +45,7 @@ def send_whatsapp_message(data):
     }
     headers = {
         "Content-type": "application/json",
-        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Authorization": f"Bearer {access_token}",
     }
     url = f"https://graph.facebook.com/{VERSION}/{phone_number_id}/messages"
 
@@ -142,9 +143,10 @@ def webhook(request):
 
 
             sendingData = {
-                "recipient": customer_number,
-                "text": answer if answer else 'Wait for my response..',
-                "phone_number_id" : appservice.phone_number_id
+                "recipient"       : customer_number,
+                "text"            : answer if answer else 'Wait for my response..',
+                "phone_number_id" : appservice.phone_number_id,
+                "access_token"    : appservice.access_token
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
@@ -182,9 +184,10 @@ def webhook(request):
             chat_history = get_chat_history(chatsession=chatsession)
 
             sendingData = {
-                "recipient": customer_number,
-                "text": answer,
-                "phone_number_id" : appservice.phone_number_id
+                "recipient"       : customer_number,
+                "text"            : answer,
+                "phone_number_id" : appservice.phone_number_id,
+                "access_token"    : appservice.access_token
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
