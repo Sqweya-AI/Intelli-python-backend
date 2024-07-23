@@ -143,7 +143,8 @@ def webhook(request):
 
             sendingData = {
                 "recipient": customer_number,
-                "text": answer if answer else 'Wait for my response..'
+                "text": answer if answer else 'Wait for my response..',
+                "phone_number_id" : appservice.phone_number_id
             }
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
