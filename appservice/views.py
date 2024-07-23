@@ -123,6 +123,7 @@ def webhook(request):
                 }, status=200)
 
             appservice = get_object_or_404(AppService, whatsapp_business_account_id=id)
+            assistant_id = appservice.assistant_id
             print('phone_number',appservice.phone_number)
             print('phone_number_id',appservice.phone_number_id)
             chatsession, created = ChatSession.objects.get_or_create(
@@ -138,7 +139,7 @@ def webhook(request):
             # ai or human logic
             if chatsession.is_handle_by_human == False and content is not None:
                 # answer = get_answer_from_model(message=content, chat_history=chat_history)
-                answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number)
+                answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number, assistant_id=assistant_id)
                 print('answer from model: ',answer)
 
 

@@ -149,7 +149,7 @@ def get_answer_from_model(message, chat_history):
 
 
 
-def bot_process(input_text, appservice, recipient_id):    
+def bot_process(input_text, appservice, recipient_id, assistant_id):   
     chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
     thread_id            = chatsession.thread_id 
     try:
@@ -171,7 +171,7 @@ def bot_process(input_text, appservice, recipient_id):
         # Run the Assistant
         run = client.beta.threads.runs.create(
             thread_id=thread_id,
-            assistant_id=appservice.assistant_id
+            assistant_id=assistant_id
         )
 
         # Wait for the run to complete
@@ -190,6 +190,7 @@ def bot_process(input_text, appservice, recipient_id):
 
 
     except Exception as e:
+        print(e)
         return None
 
 
