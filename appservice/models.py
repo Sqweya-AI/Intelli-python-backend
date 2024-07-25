@@ -13,6 +13,9 @@ class AppService(models.Model):
     created_at       = models.DateTimeField(auto_now_add=True)
     whatsapp_business_account_id = models.CharField(max_length=300, unique=True, null=True)
 
+    def __str__(self) -> str:
+        return self.phone_number
+
 
 
 class ChatSession(models.Model):
@@ -27,10 +30,17 @@ class ChatSession(models.Model):
     class Meta:
         unique_together = ['customer_number', 'appservice']
 
+    
+    def __str__(self) -> str:
+        return self.customer_name + ' ' + self.customer_name
+
 class Message(models.Model):
     content     = models.TextField(null=True, blank=True)
     answer      = models.TextField(null=True, blank=True)
     created_at  = models.DateTimeField(auto_now_add=True)
     sender      = models.CharField(max_length=20, choices=[('human', 'human'), ('ai', 'ai')], null=True, blank=True)
     chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True, related_name='messages')
+
+    def __str__(self) -> str:
+        return str(self.created_at) + ' ' + self.content
 
