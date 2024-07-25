@@ -56,6 +56,7 @@ def send_whatsapp_message(data):
 
     if response.status_code != 200:
         print(response.status_code)
+        print(response.json())
         print("WhatsApp failed to send message!")
         print()
 
@@ -135,6 +136,7 @@ def webhook(request):
             chatsession.save()
 
             chat_history = get_chat_history(chatsession=chatsession)
+            answer = 'Wait for my response..'
 
             # ai or human logic
             if chatsession.is_handle_by_human == False and content is not None:
@@ -143,24 +145,24 @@ def webhook(request):
                 print('answer from model: ',answer)
 
 
-                sendingData = {
-                    "recipient"       : customer_number,
-                    "text"            : answer if answer else 'Wait for my response..',
-                    "phone_number_id" : appservice.phone_number_id,
-                    "access_token"    : appservice.access_token
-                }
-                send_whatsapp_message(sendingData)
-                message = Message.objects.create(
-                    content     = content,
-                    answer      = answer,
-                    chatsession = chatsession,
-                    sender      = 'ai'
-                )
+            sendingData = {
+                "recipient"       : customer_number,
+                "text"            : answer,
+                "phone_number_id" : appservice.phone_number_id,
+                "access_token"    : appservice.access_token
+            }
+            send_whatsapp_message(sendingData)
+            message = Message.objects.create(
+                content     = content,
+                answer      = answer,
+                chatsession = chatsession,
+                sender      = 'ai'
+            )
 
-                message.save()
+            message.save()
 
-                # print(request.data)
-                return JsonResponse({'result': answer}, status=201)
+            # print(request.data)
+            return JsonResponse({'result': answer}, status=201)
 
         else:
             try:
