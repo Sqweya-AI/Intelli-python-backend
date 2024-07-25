@@ -13,4 +13,4 @@ class Business(models.Model):
 
 
     def __str__(self) -> str:
-        return self.name + ' ' + self.org_id
+        return self.name + ' ' + self.owner

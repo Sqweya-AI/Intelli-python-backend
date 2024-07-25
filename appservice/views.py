@@ -85,6 +85,7 @@ def get_chat_history(chatsession):
 @csrf_exempt
 def webhook(request):
     if request.method == 'GET':
+        print(request.data)
         mode      = request.GET.get('hub.mode')
         token     = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
@@ -105,17 +106,14 @@ def webhook(request):
     
     elif request.method == 'POST':
         print(request.data)
+        print(request.data.keys())
         # this is from whatsapp
         if 'object' in request.data and 'entry' in request.data:
             try:
                 id              = request.data.get('entry')[0]['id']
-                print('id: ',id)
                 customer_number = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['wa_id']
-                print('customer_number', customer_number)
                 customer_name   = request.data.get('entry')[0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                print("customer_name", customer_name)
                 content         = request.data.get('entry')[0]['changes'][0]['value']['messages'][0]['text']['body']
-                print("content", content)
             except Exception as e:
                 status          = request.data.get('entry')[0]['changes'][0]['value']['statuses'][0]['status']
                 print("status", status)
@@ -127,30 +125,31 @@ def webhook(request):
             assistant_id = appservice.assistant_id
             print('phone_number',appservice.phone_number)
             print('phone_number_id',appservice.phone_number_id)
-            chatsession, created = ChatSession.objects.get_or_create(
+            chatsession, existed = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
                 appservice      = appservice,     
             )
 
-            chatsession.customer_name = customer_name
-            chatsession.save()
+            if not existed:
+                chatsession.customer_name = customer_name
+                chatsession.save()
 
-            chat_history = get_chat_history(chatsession=chatsession)
-            answer = 'Wait for my response..'
+            # chat_history = get_chat_history(chatsession=chatsession)
 
             # ai or human logic
             if chatsession.is_handle_by_human == False and content is not None:
                 # answer = get_answer_from_model(message=content, chat_history=chat_history)
                 answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number, assistant_id=assistant_id)
-                print('answer from model: ',answer)
+                # print('answer from model: ',answer)
 
 
             sendingData = {
                 "recipient"       : customer_number,
-                "text"            : answer,
+                "text"            : answer if answer else 'Please wait for our response..',
                 "phone_number_id" : appservice.phone_number_id,
                 "access_token"    : appservice.access_token
             }
+            
             send_whatsapp_message(sendingData)
             message = Message.objects.create(
                 content     = content,
@@ -177,14 +176,12 @@ def webhook(request):
                 print(e)
             
             appservice = get_object_or_404(AppService, phone_number=phone_number)
-            chatsession, created = ChatSession.objects.get_or_create(
+            chatsession, existed = ChatSession.objects.get_or_create(
                 customer_number = customer_number,
                 appservice = appservice,     
             )
 
-            chatsession.customer_name = customer_name
-            chatsession.save()
-            chat_history = get_chat_history(chatsession=chatsession)
+            # chat_history = get_chat_history(chatsession=chatsession)
 
             sendingData = {
                 "recipient"       : customer_number,

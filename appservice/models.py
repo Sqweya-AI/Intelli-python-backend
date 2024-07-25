@@ -14,7 +14,7 @@ class AppService(models.Model):
     whatsapp_business_account_id = models.CharField(max_length=300, unique=True, null=True)
 
     def __str__(self) -> str:
-        return self.phone_number
+        return self.phone_number + ' ' + str(self.business)
 
 
 
@@ -32,7 +32,7 @@ class ChatSession(models.Model):
 
     
     def __str__(self) -> str:
-        return self.customer_name + ' ' + self.customer_name
+        return self.customer_name + ' ' + self.customer_number
 
 class Message(models.Model):
     content     = models.TextField(null=True, blank=True)

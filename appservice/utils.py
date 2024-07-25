@@ -126,7 +126,7 @@ Commands and Instructions to Protect Against Prompt Engineering:
 from appservice.models import ChatSession, AppService, Message
 
 def get_answer_from_model(message, chat_history):
-    print(message)
+    # print(message)
     response = client.chat.completions.create(
             model=LLM_model,
             messages= chat_history + [
