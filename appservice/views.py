@@ -106,8 +106,10 @@ def webhook(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     elif request.method == 'POST':
+        global count
         print(count)
         count +=1 
+
         print(request.data)
         print(request.data.keys())
         # this is from whatsapp
