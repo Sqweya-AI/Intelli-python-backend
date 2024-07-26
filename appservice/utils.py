@@ -1,9 +1,13 @@
 import openai 
 import os 
 import time 
+import requests
+
 
 openai.api_key  = os.getenv('OPENAI_API_KEY')
 ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
+VERSION         = os.getenv("VERSION")
+
  
 client = openai.OpenAI()
 
@@ -199,3 +203,39 @@ def bot_process(input_text, appservice, recipient_id, assistant_id):
 def sentiment_analysis(chat_history, recipient_id):
     # take all the lasted chats 
     pass
+
+
+
+
+def send_whatsapp_message(data):
+    recipient = data.get("recipient")
+    text = data.get("text")
+    phone_number_id = data.get('phone_number_id')
+    access_token    = data.get('access_token')
+
+    print('Le text a envoyé: ',text)
+    sending_data = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": recipient,
+        "type": "text",
+        "text": {"preview_url": False, "body": text},
+    }
+    headers = {
+        "Content-type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+    url = f"https://graph.facebook.com/{VERSION}/{phone_number_id}/messages"
+
+    try:
+      response = requests.post(url, json=sending_data, headers=headers)
+    except Exception as e:
+        print('Sending Error :', e)
+
+    if response.status_code != 200:
+        print(response.status_code)
+        print(response.json())
+        print("WhatsApp failed to send message!")
+        print()
+
+    # return response
