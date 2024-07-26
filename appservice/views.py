@@ -19,6 +19,8 @@ import json
 import logging
 import requests 
 
+from pprint import pprint as print 
+
 
 
 # Load environment variables
@@ -166,16 +168,13 @@ count = 0
 def webhook(request):
     if request.method == 'GET':
         
-        print(request.data)
         mode      = request.GET.get('hub.mode')
         token     = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
 
-        print(mode, token, challenge)
         
         logging.info(f"Verification attempt - Mode: {mode}, Token: {token}, Challenge: {challenge}")
         logging.info(f"Stored VERIFY_TOKEN: {VERIFY_TOKEN}")
-        print (VERIFY_TOKEN)
 
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             logging.info("Verification successful")
@@ -192,6 +191,8 @@ def webhook(request):
 
         print(request.data)
         print(request.data.keys())
+        print(request.data.get('entry')[0]['changes'][0].keys())
+
         # this is from whatsapp
         if 'object' in request.data and 'entry' in request.data:
             try:
@@ -220,23 +221,23 @@ def webhook(request):
                     # answer = get_answer_from_model(message=content, chat_history=chat_history)
                     answer = bot_process(input_text=content, appservice=appservice, recipient_id=customer_number, assistant_id=assistant_id)
 
+                if 'messages' in request.data.get('entry')[0]['changes'][0].keys():
+                    sendingData = {
+                        "recipient"       : customer_number,
+                        "text"            : answer if answer else 'Please wait for our response..',
+                        "phone_number_id" : appservice.phone_number_id,
+                        "access_token"    : appservice.access_token
+                    }
+                    
+                    send_whatsapp_message(sendingData)
+                    message = Message.objects.create(
+                        content     = content,
+                        answer      = answer,
+                        chatsession = chatsession,
+                        sender      = 'ai'
+                    )
 
-                sendingData = {
-                    "recipient"       : customer_number,
-                    "text"            : answer if answer else 'Please wait for our response..',
-                    "phone_number_id" : appservice.phone_number_id,
-                    "access_token"    : appservice.access_token
-                }
-                
-                send_whatsapp_message(sendingData)
-                message = Message.objects.create(
-                    content     = content,
-                    answer      = answer,
-                    chatsession = chatsession,
-                    sender      = 'ai'
-                )
-
-                message.save()
+                    message.save()
 
                 # print(request.data)
                 return JsonResponse({'result': answer}, status=201)
