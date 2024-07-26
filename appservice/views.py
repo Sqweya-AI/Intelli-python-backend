@@ -78,13 +78,14 @@ def get_chat_history(chatsession):
     return chat_history
 
 
-
+count = 0
 
 @api_view(['GET','POST'])
 @permission_classes([AllowAny,])
 @csrf_exempt
 def webhook(request):
     if request.method == 'GET':
+        
         print(request.data)
         mode      = request.GET.get('hub.mode')
         token     = request.GET.get('hub.verify_token')
@@ -105,6 +106,8 @@ def webhook(request):
             return JsonResponse({'error': 'Verification token mismatch'}, status=403)
     
     elif request.method == 'POST':
+        print(count)
+        count +=1 
         print(request.data)
         print(request.data.keys())
         # this is from whatsapp
