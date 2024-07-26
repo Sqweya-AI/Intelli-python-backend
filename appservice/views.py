@@ -76,6 +76,8 @@ def extract_whatsapp_data(data: Dict[str, Any]) -> Dict[str, Any]:
                 'customer_name'  : changes['contacts'][0]['profile']['name'],
                 'content'        : changes['messages'][0]['text']['body']
             }
+        else:
+            return {}
     except KeyError:
         status = changes['statuses'][0]['status']
         logger.info(f"Received status: {status}")
