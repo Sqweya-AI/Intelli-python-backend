@@ -8,6 +8,8 @@ openai.api_key  = os.getenv('OPENAI_API_KEY')
 ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
 VERSION         = os.getenv("VERSION")
 
+NOTIFICATION_ASSISTANT_ID = os.getenv("NOTIFICATION_ASSISTANT_ID")
+
  
 client = openai.OpenAI()
 
@@ -157,7 +159,6 @@ def bot_process(input_text, appservice, recipient_id, assistant_id):
     chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
     thread_id            = chatsession.thread_id 
     try:
-
         if not thread_id:
             thread = client.beta.threads.create()
             thread_id = thread.id
@@ -239,3 +240,29 @@ def send_whatsapp_message(data):
         print()
 
     # return response
+
+
+
+def check_for_escalated_events(message):
+    thread = client.beta.threads.create()
+
+    # Add the user's message to the thread
+    client.beta.threads.messages.create(
+        thread_id = thread.id,
+        role      = "user",
+        content   = message
+    )
+
+    # Run the Assistant
+    run = client.beta.threads.runs.create_and_poll(
+        thread_id=thread.id,
+        assistant_id=NOTIFICATION_ASSISTANT_ID
+    )
+
+    # Retrieve the assistant's response
+    messages = list(client.beta.threads.messages.list(thread_id=thread.id, run_id=run.id))
+
+    # return assistant_response
+    response = messages[0].content[0].text.value
+    print(response)
+    return response

@@ -9,18 +9,15 @@ from rest_framework.permissions import AllowAny
 
 from .serializers import ChatSessionSerializer, MessageSerializer, AppServiceSerializer
 from .models import AppService, ChatSession, Message
-from business.models import Business
-from .utils import get_answer_from_model, bot_process, send_whatsapp_message
+from .utils  import bot_process
+from .utils  import send_whatsapp_message
+from .utils  import check_for_escalated_events
 
-from typing import Dict, Any
+from business.models import Business
 
 import os 
-import json 
 import logging
-import requests 
-
-from pprint import pprint as print 
-
+from typing import Dict, Any
 
 
 # Load environment variables
@@ -39,7 +36,7 @@ logger = logging.getLogger(__name__)
 def get_chat_history(chatsession):
     chat_history = []
     messages = Message.objects.filter(chatsession=chatsession).order_by('-created_at')[:3]
-    print(messages)
+    logger.info(messages)
     if messages:
         for message in messages:
             chat_history.append({"role" : "system", "content" : message.answer if message.answer else ' ' })
@@ -118,6 +115,9 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
         chatsession=chatsession,
         sender='ai'
     )
+
+    # check for escalated events 
+    check_for_escalated_events(data['content'])
 
     return JsonResponse({'result': answer}, status=status.HTTP_201_CREATED)
 
