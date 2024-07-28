@@ -2,6 +2,7 @@ import openai
 import os 
 import time 
 import requests
+import json
 
 
 openai.api_key  = os.getenv('OPENAI_API_KEY')
@@ -264,6 +265,6 @@ def check_for_escalated_events(message):
 
     # return assistant_response
     response = messages[0].content[0].text.value
-    print(response.keys())
+    response = json.loads(response)
     print(type(response))
     return response
