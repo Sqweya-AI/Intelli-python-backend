@@ -84,6 +84,10 @@ def extract_whatsapp_data(data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
+    print(data)
+    if data == {}:
+        return False
+    
     appservice = get_object_or_404(AppService, whatsapp_business_account_id=data['id'])
     chatsession, created = ChatSession.objects.get_or_create(
         customer_number=data['customer_number'],
@@ -146,6 +150,7 @@ def handle_other_message(data: Dict[str, Any]) -> JsonResponse:
     )
 
     return JsonResponse({'result': data['answer']}, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
