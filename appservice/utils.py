@@ -107,6 +107,7 @@ def get_airport_code(city):
     airport_codes = {
         'accra': 'ACC',
         'nairobi': 'NBO',
+        'dakar': 'DSS',
         'london': 'LHR',
         'new york': 'JFK',
         'paris': 'CDG',
