@@ -118,6 +118,9 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
         sender='ai'
     )
 
+    # check for escalated events 
+    check_for_escalated_events(data['content'])
+
     return JsonResponse({'result': answer}, status=status.HTTP_201_CREATED)
 
 
