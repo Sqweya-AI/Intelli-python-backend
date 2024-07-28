@@ -264,5 +264,6 @@ def check_for_escalated_events(message):
 
     # return assistant_response
     response = messages[0].content[0].text.value
-    print(response)
+    print(response.keys())
+    print(type(response))
     return response
