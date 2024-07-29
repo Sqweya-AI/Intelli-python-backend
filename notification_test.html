@@ -11,11 +11,18 @@
     <h1>WebSocket with Django Channels</h1>
     <div id="events"></div>
     <script>
-        const eventSource = new WebSocket("ws://" + 'https://intelli-python-backend-lxui.onrender.com' + "/ws/events/");
+        const eventSource = new WebSocket("ws://" + 'intelli-python-backend-lxui.onrender.com' + "/ws/events");
         eventSource.onmessage = function (event) {
             const newElement = document.createElement("div");
             newElement.textContent = JSON.parse(event.data).message;
             document.getElementById("events").appendChild(newElement);
+        };
+
+        const socket = new WebSocket('ws://intelli-python-backend-lxui.onrender.com/ws/events/');
+
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            console.log('Message from server:', data.message);
         };
     </script>
 </body>

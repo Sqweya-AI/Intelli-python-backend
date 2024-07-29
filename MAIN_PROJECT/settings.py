@@ -119,6 +119,17 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'MAIN_PROJECT.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis-10696.c12.us-east-1-4.ec2.cloud.redislabs.com", 10696)],
+            "password": 'kaXF1KjTJUAPRKFZExJjMrThjKKenbTt'
+        },
+    },
+}
+
 WSGI_APPLICATION = 'MAIN_PROJECT.wsgi.application'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
