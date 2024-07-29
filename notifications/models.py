@@ -15,10 +15,6 @@ class Notification(models.Model):
     created_at       = models.DateTimeField(auto_now_add=True)
     
 
-# def notify_clients(instance):
-#     message = f"{instance.text}"
-#     from .views import event_queue  # Importing here to avoid circular import issues
-#     event_queue.put(message)
 
 @receiver(post_save, sender=Notification)
 def send_notification(sender, instance, created, **kwargs):

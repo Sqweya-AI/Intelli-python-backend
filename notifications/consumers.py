@@ -1,8 +1,6 @@
 # myapp/consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
 class EventConsumer(AsyncWebsocketConsumer):
     async def connect(self):

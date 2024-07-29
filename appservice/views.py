@@ -86,7 +86,7 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
             {
                 'status' : False
             },
-            status=status.HTTP_100_CONTINUE
+            status=status.HTTP_204_NO_CONTENT
         )
     
     appservice = get_object_or_404(AppService, whatsapp_business_account_id=data['id'])
@@ -171,8 +171,9 @@ def webhook(request):
         if 'object' in data and 'entry' in data:
             whatsapp_data = extract_whatsapp_data(data)
             if 'status' in whatsapp_data:
-                return Response({'result': "Status Well Received"}, status=status.HTTP_200_OK)
-            return handle_whatsapp_message(whatsapp_data)
+                return Response({'result': "Status Well Received"}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return handle_whatsapp_message(whatsapp_data)
         else:
             return handle_other_message(data)
         
