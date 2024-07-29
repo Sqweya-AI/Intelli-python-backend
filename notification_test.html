@@ -1,0 +1,23 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SSE with Django</title>
+</head>
+
+<body>
+    <h1>Server-Sent Events with Django</h1>
+    <div id="events"></div>
+    <script>
+        const eventSource = new EventSource("/events/");
+        eventSource.onmessage = function (event) {
+            const newElement = document.createElement("div");
+            newElement.textContent = event.data;
+            document.getElementById("events").appendChild(newElement);
+        };
+    </script>
+</body>
+
+</html>

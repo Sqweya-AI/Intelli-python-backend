@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'business',
     'appservice',
     'waitlist',
+    'notifications',
 ]
 
 
