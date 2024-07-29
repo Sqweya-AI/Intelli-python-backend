@@ -83,15 +83,7 @@ def extract_whatsapp_data(data: Dict[str, Any]) -> Dict[str, Any]:
         return {'status': status}
 
 
-def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
-    if data == {}:
-        return Response(
-            {
-                'status' : False
-            },
-            status=status.HTTP_204_NO_CONTENT
-        )
-    
+def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:    
     appservice = get_object_or_404(AppService, whatsapp_business_account_id=data['id'])
     chatsession, created = ChatSession.objects.get_or_create(
         customer_number=data['customer_number'],
@@ -173,10 +165,9 @@ def webhook(request):
         
         if 'object' in data and 'entry' in data:
             whatsapp_data = extract_whatsapp_data(data)
-            if 'status' in whatsapp_data:
-                return Response({'result': "Status Well Received"}, status=status.HTTP_204_NO_CONTENT)
-            else:
+            if 'status' not in whatsapp_data and whatsapp_data != {}:
                 return handle_whatsapp_message(whatsapp_data)
+            
         else:
             return handle_other_message(data)
         
