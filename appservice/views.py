@@ -128,7 +128,13 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
 
     # check for escalated events 
     events = check_for_escalated_events(data['content'])
-    print(events)
+    logger.info(events)
+    if 'user_request_no_alert' not in events['escalated_events']:
+        notif = events 
+        notif['chatsession'] = chatsession
+        notif['channel']     = 'whatsapp'
+        notification = Notification.objects.create(**notif)
+        notification.save()
     return JsonResponse({'result': answer}, status=status.HTTP_201_CREATED)
 
 
