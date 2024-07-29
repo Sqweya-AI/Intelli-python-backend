@@ -78,7 +78,9 @@ INSTALLED_APPS = [
     'appservice',
     'waitlist',
     'notifications',
+    'channels',
 ]
+
 
 
 # MIDDLEWARE
@@ -116,7 +118,7 @@ TEMPLATES = [
     },
 ]
 
-
+ASGI_APPLICATION = 'MAIN_PROJECT.asgi.application'
 WSGI_APPLICATION = 'MAIN_PROJECT.wsgi.application'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

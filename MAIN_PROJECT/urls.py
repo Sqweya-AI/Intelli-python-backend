@@ -12,7 +12,7 @@ urlpatterns = [
     path('', include('main_app.urls')), 
     path('webhook/', webhook, name="verify webhook"),
     path('appservice/', include('appservice.urls')),
-    path('notification/', include('notifications.urls')),
+    # path('notification/', include('notifications.urls')),
     path('intelli_waitlist/', waitlist_create),
 
 ]

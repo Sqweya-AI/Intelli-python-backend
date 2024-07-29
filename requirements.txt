@@ -9,6 +9,7 @@ attrs==23.2.0
 bidict==0.22.1
 blinker==1.7.0
 certifi==2024.2.2
+channels==4.1.0
 charset-normalizer==3.3.2
 click==8.1.7
 dataclasses-json==0.6.7

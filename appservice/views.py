@@ -32,8 +32,6 @@ ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
 
 logger = logging.getLogger(__name__)
 
-
-
 def get_chat_history(chatsession):
     chat_history = []
     messages = Message.objects.filter(chatsession=chatsession).order_by('-created_at')[:3]
