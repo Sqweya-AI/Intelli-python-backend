@@ -124,8 +124,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis-10696.c12.us-east-1-4.ec2.cloud.redislabs.com", 10696)],
-            "password": 'kaXF1KjTJUAPRKFZExJjMrThjKKenbTt'
+            "hosts": [{"address": "redis://redis-10696.c12.us-east-1-4.ec2.cloud.redislabs.com:10696", "password": "kaXF1KjTJUAPRKFZExJjMrThjKKenbTt"}],
         },
     },
 }
