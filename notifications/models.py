@@ -16,7 +16,7 @@ class Notification(models.Model):
     
 
     def __str__(self) -> str:
-        return str(self.created_at)
+        return str(self.id) + ' ' + str(self.created_at)
 
 @receiver(post_save, sender=Notification)
 def send_notification(sender, instance, created, **kwargs):
@@ -26,6 +26,6 @@ def send_notification(sender, instance, created, **kwargs):
             'events',
             {
                 'type': 'send_event',
-                'message': f'{instance.text}'
+                'message': f'{instance.text}\ncustomer number : {instance.chatsession.customer_number} \ncustomer name : {instance.chatsession.customer_name}'
             }
         )
