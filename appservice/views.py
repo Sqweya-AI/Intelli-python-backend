@@ -123,7 +123,7 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
     # check for escalated events 
     events = check_for_escalated_events(data['content'])
     logger.info(events)
-    if len(events['escalated_events']) !=0:
+    if len(events.get('escalated_events', [])) !=0 or events != {}:
         notif = events 
         notif['chatsession'] = chatsession
         notif['channel']     = 'whatsapp'
