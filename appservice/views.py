@@ -82,7 +82,7 @@ def extract_whatsapp_data(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:   
     if data == {}:
-        return Response(status=200) 
+        return Response(status=200)
     appservice = get_object_or_404(AppService, whatsapp_business_account_id=data['id'])
     chatsession, created = ChatSession.objects.get_or_create(
         customer_number=data['customer_number'],

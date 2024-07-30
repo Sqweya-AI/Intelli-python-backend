@@ -14,5 +14,6 @@ urlpatterns = [
     path('appservice/', include('appservice.urls')),
     # path('notification/', include('notifications.urls')),
     path('intelli_waitlist/', waitlist_create),
+    path('monitoring/', include('monitoring.urls')),
 
 ]

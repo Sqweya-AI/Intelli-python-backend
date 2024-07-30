@@ -10,6 +10,11 @@ class MessageSerializer(serializers.Serializer):
     # chatsession = ChatSessionSerializer()
 
 
+class MessageAnalysisSerializer(serializers.Serializer):
+    id         = serializers.IntegerField()
+    content    = serializers.CharField()
+
+
 class ChatSessionSerializer(serializers.Serializer):
     id              = serializers.IntegerField()
     customer_number = serializers.CharField()

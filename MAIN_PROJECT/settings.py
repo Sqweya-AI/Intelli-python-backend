@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'waitlist',
     'notifications',
     'channels',
+    'monitoring',
 ]
 
 
