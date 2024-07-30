@@ -215,7 +215,7 @@ def send_whatsapp_message(data):
     phone_number_id = data.get('phone_number_id')
     access_token    = data.get('access_token')
 
-    print('Le text a envoyé: ',text)
+    # print('Le text a envoyé: ',text)
     sending_data = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",

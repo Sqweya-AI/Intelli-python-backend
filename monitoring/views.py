@@ -18,7 +18,6 @@ from appservice.models import Message
 from appservice.serializers import MessageAnalysisSerializer
 
 
-import os 
 import logging
 import json 
 
