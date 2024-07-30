@@ -129,7 +129,7 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
         notif['channel']     = 'whatsapp'
         notification = Notification.objects.create(**notif)
         notification.save()
-    return JsonResponse({'result': answer}, status=status.HTTP_201_CREATED)
+    return JsonResponse({'result': answer}, status=status.HTTP_200_OK)
 
 
 def handle_other_message(data: Dict[str, Any]) -> JsonResponse:
@@ -153,7 +153,7 @@ def handle_other_message(data: Dict[str, Any]) -> JsonResponse:
         sender='human'
     )
 
-    return JsonResponse({'result': data['answer']}, status=status.HTTP_201_CREATED)
+    return JsonResponse({'result': data['answer']}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
