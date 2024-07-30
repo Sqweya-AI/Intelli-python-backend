@@ -15,6 +15,8 @@ class Notification(models.Model):
     created_at       = models.DateTimeField(auto_now_add=True)
     
 
+    def __str__(self) -> str:
+        return str(self.created_at)
 
 @receiver(post_save, sender=Notification)
 def send_notification(sender, instance, created, **kwargs):

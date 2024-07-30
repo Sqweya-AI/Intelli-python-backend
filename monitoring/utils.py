@@ -1,9 +1,6 @@
 import openai 
 import os 
-import time 
-import requests
 import json
-from appservice.models import Message
 
 openai.api_key                     = os.getenv('OPENAI_API_KEY')
 SENTIMENT_ANALYZER_ASSISTANT_ID    = os.getenv("SENTIMENT_ANALYZER_ASSISTANT_ID")
@@ -38,14 +35,3 @@ def sentiment_analyzer(message_list):
 
 
 
-def get_chat_history(chatsession):
-    chat_history = []
-    messages = Message.objects.filter(chatsession=chatsession).order_by('-created_at')[:10]
-    logger.info(messages)
-    if messages:
-        for message in messages:
-            chat_history.append({"role" : "system", "content" : message.answer if message.answer else ' ' })
-            chat_history.append({"role" : "user",   "content" : message.content if message.content else ' '})
-    
-
-    return chat_history
