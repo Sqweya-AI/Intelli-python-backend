@@ -11,17 +11,17 @@
     <div id="events"></div>
     <script>
         // Use 127.0.0.1 for the loopback address
-        const eventSource = new WebSocket("ws://" + '127.0.0.1:8000' + "/ws/events/");
-        // const eventSource = new WebSocket('wss://intelli-python-backend-lxui.onrender.com/ws/events/');
+        // const eventSource = new WebSocket("ws://" + '127.0.0.1:8000' + "/ws/events/");
+        // // const eventSource = new WebSocket('wss://intelli-python-backend-lxui.onrender.com/ws/events/');
         
-        eventSource.onmessage = function (event) {
-            const newElement = document.createElement("div");
-            const data = JSON.parse(event.data)
-            console.log(data)
-            newElement.textContent = data.message;
-            document.getElementById("events").appendChild(newElement);
-            console.log('Message from server:', data.message);
-        };
+        // eventSource.onmessage = function (event) {
+        //     const newElement = document.createElement("div");
+        //     const data = JSON.parse(event.data)
+        //     console.log(data)
+        //     newElement.textContent = data.message;
+        //     document.getElementById("events").appendChild(newElement);
+        //     console.log('Message from server:', data.message);
+        // };
 
         // Ensure the WebSocket URL is correct and the server is accessible
         const socket = new WebSocket('wss://intelli-python-backend-lxui.onrender.com/ws/events/');
@@ -30,6 +30,8 @@
             const data = JSON.parse(e.data);
             console.log('Message from server:', data.message);
         };
+
+        
     </script>
 </body>
 

@@ -31,7 +31,6 @@
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
 
 class EventConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -68,14 +67,8 @@ class EventConsumer(AsyncWebsocketConsumer):
         pass
 
     async def send_event(self, event):
-        print(event)
         await self.send(text_data=json.dumps({
             'message': event['message'],
-            # 'appservice': event['appservice'],
-            # 'chatsession': event['chatsession']
+            'appservice': event['appservice'],
+            'chatsession': event['chatsession']
         }))
-
-    @database_sync_to_async
-    def get_user_channel(self, user_id):
-        # This method helps to get the user's channel name from a user ID
-        return f"user_{user_id}"
