@@ -10,6 +10,7 @@ import json
 # Create your models here.
 
 class Notification(models.Model):
+    connection_id    = models.CharField(max_length=300, null=True, default='NOAPPLICABLE')
     chatsession      = models.ForeignKey(ChatSession, on_delete=models.CASCADE, related_name='notifications')
     text             = models.TextField()
     escalated_events = models.JSONField()
@@ -18,7 +19,7 @@ class Notification(models.Model):
     
 
     def __str__(self) -> str:
-        return str(self.id) + ' ' + str(self.created_at)
+        return f"{self.id} - {self.connection_id} - {self.created_at}"
 
 
 @receiver(post_save, sender=Notification)
@@ -26,9 +27,9 @@ def send_notification(sender, instance, created, **kwargs):
     from appservice.serializers import ChatSessionListSerializer, AppServiceListSerializer
     if created:
         channel_layer = get_channel_layer()
-        user_channel = f"user_{instance.user.id}"  # Create user-specific channel name
+        connection_channel = f"connection_{instance.connection_id}"
         async_to_sync(channel_layer.group_send)(
-            user_channel,  # Use user-specific channel
+            connection_channel,
             {
                 'type': 'send_event',
                 'message': f'{instance.text}\ncustomer number : {instance.chatsession.customer_number} \ncustomer name : {instance.chatsession.customer_name}',
@@ -37,6 +38,7 @@ def send_notification(sender, instance, created, **kwargs):
             }
         )
 
+        
 # @receiver(post_save, sender=Notification)
 # def send_notification(sender, instance, created, **kwargs):
 #     if created:

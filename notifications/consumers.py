@@ -31,44 +31,44 @@
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
 
 class EventConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Get the user from the scope
-        self.user = self.scope["user"]
+        # phone_number 
+        self.connection_id = self.scope['url_route']['kwargs']['phone_number']
         
-        # Create a unique channel name for this user
-        self.user_channel = f"user_{self.user.id}"
+        # Créer un nom de canal unique pour cette connexion
+        self.user_channel = f"connection_{self.connection_id}"
         
-        # Join user-specific group
+        # Rejoindre le groupe spécifique à cette connexion
         await self.channel_layer.group_add(
             self.user_channel,
             self.channel_name
         )
         
+        # Accepter la connexion
         await self.accept()
 
+        # Envoyer l'ID de connexion au client
+        await self.send(text_data=json.dumps({
+            'type': 'connection_established',
+            'connection_id': self.connection_id
+        }))
+
     async def disconnect(self, close_code):
-        # Leave user-specific group
+        # Quitter le groupe spécifique à cette connexion
         await self.channel_layer.group_discard(
             self.user_channel,
             self.channel_name
         )
 
     async def receive(self, text_data):
-        # Handle any incoming messages if needed
+        # Gérer les messages entrants si nécessaire
         pass
 
     async def send_event(self, event):
-        print(event)
         await self.send(text_data=json.dumps({
             'message': event['message'],
-            # 'appservice': event['appservice'],
-            # 'chatsession': event['chatsession']
+            'appservice': event['appservice'],
+            'chatsession': event['chatsession']
         }))
-
-    @database_sync_to_async
-    def get_user_channel(self, user_id):
-        # This method helps to get the user's channel name from a user ID
-        return f"user_{user_id}"
