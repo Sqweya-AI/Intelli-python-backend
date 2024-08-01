@@ -39,4 +39,10 @@ class AppServiceSerializer(serializers.Serializer):
     whatsapp_business_account_id = serializers.CharField()
 
 
+class AppServiceListSerializer(serializers.Serializer):
+    id              = serializers.IntegerField()
+    phone_number    = serializers.CharField()
+    created_at      = serializers.DateTimeField()
+    
+    
 

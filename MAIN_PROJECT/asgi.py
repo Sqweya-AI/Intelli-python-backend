@@ -17,7 +17,22 @@ import notifications.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MAIN_PROJECT.settings')
 
+from channels.layers import get_channel_layer
+
+channel_layer = get_channel_layer()
+
 # application = get_asgi_application()
+async def lifespan(scope, receive, send):
+    if scope['type'] == 'lifespan':
+        while True:
+            message = await receive()
+            if message['type'] == 'lifespan.startup':
+                await channel_layer.flush()
+                await send({'type': 'lifespan.startup.complete'})
+            elif message['type'] == 'lifespan.shutdown':
+                await send({'type': 'lifespan.shutdown.complete'})
+                return
+            
 
 
 application = ProtocolTypeRouter({
@@ -27,4 +42,5 @@ application = ProtocolTypeRouter({
             notifications.routing.websocket_urlpatterns
         )
     ),
+    "lifespan": lifespan,
 })

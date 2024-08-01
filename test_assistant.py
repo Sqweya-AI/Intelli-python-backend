@@ -38,7 +38,7 @@ You will receive a list of messages, where each message is a dictionary containi
 - 'id': A unique identifier for the message
 - 'content': The text content of the message
 
-Example input:
+Example input in json format:
 ```
 messages = [
     {
@@ -65,7 +65,7 @@ Your task:
    - The original 'content'
    - A new 'sentiment' key with a list of identified emotions
 
-Example output:
+Example output in json format:
 ```
 [
     {
@@ -102,3 +102,4 @@ assistant = client.beta.assistants.create(
 )
 
 print(assistant)
+print(assistant.id)
