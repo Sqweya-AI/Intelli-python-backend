@@ -24,7 +24,6 @@ class Notification(models.Model):
 
 @receiver(post_save, sender=Notification)
 def send_notification(sender, instance, created, **kwargs):
-    from appservice.serializers import ChatSessionListSerializer, AppServiceListSerializer
     if created:
         channel_layer = get_channel_layer()
         connection_channel = f"connection_{instance.connection_id}"
@@ -32,9 +31,7 @@ def send_notification(sender, instance, created, **kwargs):
             connection_channel,
             {
                 'type': 'send_event',
-                'message': f'{instance.text}\ncustomer number : {instance.chatsession.customer_number} \ncustomer name : {instance.chatsession.customer_name}',
-                'appservice': json.dumps(AppServiceListSerializer(instance.chatsession.appservice).data),
-                'chatsession': json.dumps(ChatSessionListSerializer(instance.chatsession).data)
+                'message': f'{instance.text}\ncustomer number : {instance.chatsession.customer_number} \ncustomer name : {instance.chatsession.customer_name}'
             }
         )
 

@@ -68,7 +68,5 @@ class EventConsumer(AsyncWebsocketConsumer):
 
     async def send_event(self, event):
         await self.send(text_data=json.dumps({
-            'message': event['message'],
-            'appservice': event['appservice'],
-            'chatsession': event['chatsession']
+            'message': event['message']
         }))
