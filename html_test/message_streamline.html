@@ -1,0 +1,65 @@
+<!-- templates/chat.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat</title>
+    <style>
+        #messages {
+            border: 1px solid #ddd;
+            height: 300px;
+            overflow-y: scroll;
+        }
+
+        .message {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Chat</h1>
+    <div id="messages"></div>
+    <input id="message-input" type="text" size="100" autofocus>
+    <button id="send-button">Send</button>
+
+    <script>
+        // Informations de connexion
+        const customerNumber = '233536633465'; // Remplacez par la valeur appropriée
+        const phoneNumber = '233536620120'; // Remplacez par la valeur appropriée
+        const url         = '127.0.0.1:8000'
+
+        // Connexion WebSocket avec les paramètres
+        const chatSocket = new WebSocket(
+            `ws://${url}/ws/messages/?customer_number=${customerNumber}&phone_number=${phoneNumber}`
+        );
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const message = data['message'];
+            console.log(message)
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.textContent = `[${message.created_at}] ${message.sender}: ${message.content}`;
+            document.querySelector('#messages').appendChild(messageElement);
+            document.querySelector('#messages').scrollTop = document.querySelector('#messages').scrollHeight;
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#send-button').onclick = function (e) {
+            const input = document.querySelector('#message-input');
+            const message = input.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            input.value = '';
+        };
+    </script>
+</body>
+
+</html>

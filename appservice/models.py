@@ -2,6 +2,10 @@ from django.db import models
 
 from business.models import Business
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 class AppService(models.Model):
     business         = models.ForeignKey(Business, on_delete=models.SET_NULL, null=True)
@@ -32,7 +36,7 @@ class ChatSession(models.Model):
 
     
     def __str__(self) -> str:
-        return self.customer_name + ' ' + self.customer_number
+        return self.customer_name + ' ' + self.customer_number + ' ' + self.appservice.phone_number
 
 class Message(models.Model):
     content     = models.TextField(null=True, blank=True)
@@ -44,3 +48,23 @@ class Message(models.Model):
     def __str__(self) -> str:
         return str(self.created_at) + ' ' + self.content
 
+
+@receiver(post_save, sender=Message)
+def message_created(sender, instance, created, **kwargs):
+    print('hello')
+    print(f'chat_{instance.chatsession.customer_number}_{instance.appservice.phone_number}')
+    if created:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{instance.chatsession.customer_number}_{instance.appservice.phone_number}',  # Assurez-vous que le groupe correspond à votre logique de gestion de sessions
+            {
+                'type': 'chat_message',
+                'message': {
+                    'id': instance.id,
+                    'content': instance.content,
+                    'answer': instance.answer,
+                    'created_at': instance.created_at.isoformat(),
+                    'sender': instance.sender,
+                }
+            }
+        )

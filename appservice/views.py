@@ -168,7 +168,7 @@ def webhook(request):
             if 'status' not in whatsapp_data and whatsapp_data != {}:
                 return handle_whatsapp_message(whatsapp_data)
             else:
-                return Response(status=200)
+                return Response(status.HTTP_200_OK)
             
         else:
             return handle_other_message(data)
@@ -202,7 +202,7 @@ def takeover(request):
             {
                 'message' : 'You took over the AI Assistant'
             },
-            status=200
+            status.HTTP_200_OK
         )
 
 
@@ -228,7 +228,7 @@ def handover(request):
             {
                 'message' : 'You hand over the AI Assistant'
             },
-            status=200
+            status.HTTP_200_OK
         )
 
 
@@ -270,6 +270,6 @@ def appservices_list(request, owner):
     if business:
         appservices = AppService.objects.filter(business=business)
         serializer  = AppServiceSerializer(appservices, many=True)
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status.HTTP_200_OK)
     
 

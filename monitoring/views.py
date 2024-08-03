@@ -28,7 +28,7 @@ def get_chat_history_for_analysis(chatsession):
     # logger.info(messages)
     serializer = MessageAnalysisSerializer(messages, many=True)
 
-    return serializer.data
+    return json.dumps(serializer.data)
 
 
 @api_view(['POST'])
@@ -41,7 +41,7 @@ def sentiment_analysis(request):
     chatsession     = ChatSession.objects.filter(appservice=appservice, customer_number=customer_number).first()
     print(chatsession)
     message_list    = get_chat_history_for_analysis(chatsession=chatsession)
-    analysis        = sentiment_analyzer(message_list=json.dumps(message_list))
+    analysis        = sentiment_analyzer(message_list=message_list)
 
     data = {}
     data['chatsession'] = chatsession
