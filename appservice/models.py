@@ -56,7 +56,7 @@ def message_created(sender, instance, created, **kwargs):
     if created:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'chat_{instance.chatsession.customer_number}_{instance.appservice.phone_number}',  # Assurez-vous que le groupe correspond à votre logique de gestion de sessions
+            f'chat_{instance.chatsession.customer_number}_{instance.chatsession.appservice.phone_number}',  # Assurez-vous que le groupe correspond à votre logique de gestion de sessions
             {
                 'type': 'chat_message',
                 'message': {
