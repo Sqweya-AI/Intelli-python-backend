@@ -171,7 +171,7 @@ def webhook(request):
             if 'status' not in whatsapp_data and whatsapp_data != {}:
                 return handle_whatsapp_message(whatsapp_data)
             else:
-                return Response(status=200)
+                return Response(status.HTTP_200_OK)
             
         else:
             return handle_other_message(data)
