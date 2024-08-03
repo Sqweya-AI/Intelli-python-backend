@@ -52,7 +52,7 @@ class Message(models.Model):
 @receiver(post_save, sender=Message)
 def message_created(sender, instance, created, **kwargs):
     print('hello')
-    print(f'chat_{instance.chatsession.customer_number}_{instance.chatssion.appservice.phone_number}')
+    print(f'chat_{instance.chatsession.customer_number}_{instance.chatsession.appservice.phone_number}')
     if created:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
