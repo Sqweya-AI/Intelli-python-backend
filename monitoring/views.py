@@ -27,7 +27,7 @@ def get_chat_history_for_analysis(chatsession):
     messages = Message.objects.filter(chatsession=chatsession).order_by('-created_at')[:10]
     # logger.info(messages)
     serializer = MessageAnalysisSerializer(messages, many=True)
-
+    logger.info(serializer.data)
     return json.dumps(serializer.data)
 
 

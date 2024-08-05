@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from business.serializers import BusinessSerializer
 
+from notifications.serializers import NotificationSerializer
+
 class MessageSerializer(serializers.Serializer):
     id          = serializers.IntegerField()
     content     = serializers.CharField()
@@ -19,6 +21,14 @@ class ChatSessionSerializer(serializers.Serializer):
     id              = serializers.IntegerField()
     customer_number = serializers.CharField()
     messages        = MessageSerializer(many=True, read_only=True)
+    updated_at      = serializers.DateTimeField()
+
+
+class ChatSessionNotificationSerializer(serializers.Serializer):
+    id              = serializers.IntegerField()
+    customer_number = serializers.CharField()
+    customer_name   = serializers.CharField()
+    notifications   = NotificationSerializer(many=True, read_only=True)
     updated_at      = serializers.DateTimeField()
 
 

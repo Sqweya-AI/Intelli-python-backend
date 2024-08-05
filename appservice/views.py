@@ -144,12 +144,13 @@ def handle_other_message(data: Dict[str, Any]) -> JsonResponse:
         "access_token": appservice.access_token
     })
 
-    Message.objects.create(
-        content=data['content'],
+    message = Message.objects.create(
+        content=data.get('content', 'NOAPPLICABLE'),
         answer=data['answer'],
         chatsession=chatsession,
         sender='human'
     )
+    message.save()
 
     return JsonResponse({'result': data['answer']}, status=status.HTTP_200_OK)
 
@@ -165,10 +166,10 @@ def webhook(request):
         
         if 'object' in data and 'entry' in data:
             whatsapp_data = extract_whatsapp_data(data)
-            if 'status' not in whatsapp_data and whatsapp_data != {}:
-                return handle_whatsapp_message(whatsapp_data)
-            else:
+            if 'status' in whatsapp_data or whatsapp_data == {}:
                 return Response(status.HTTP_200_OK)
+            else:
+                return handle_whatsapp_message(whatsapp_data)
             
         else:
             return handle_other_message(data)
@@ -239,7 +240,7 @@ def handover(request):
 def chatsessions_history(request, phone_number):
     appservice   = get_object_or_404(AppService, phone_number=phone_number)
     if appservice:
-        chatsession  = ChatSession.objects.filter(appservice=appservice).prefetch_related('messages')
+        chatsession  = ChatSession.objects.filter(appservice=appservice, messages__exists=True).prefetch_related('messages')
         serializer   = ChatSessionSerializer(chatsession, many=True)
 
         return Response(serializer.data, status=200)

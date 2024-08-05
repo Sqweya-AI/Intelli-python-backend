@@ -1,7 +1,7 @@
 # INTELLI_PROJECT/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from bot_app.views import webhook, get_chat_histories
+from bot_app.views import webhook
 from waitlist.views import waitlist_create
 
 urlpatterns = [
@@ -12,7 +12,7 @@ urlpatterns = [
     path('', include('main_app.urls')), 
     path('webhook/', webhook, name="verify webhook"),
     path('appservice/', include('appservice.urls')),
-    # path('notification/', include('notifications.urls')),
+    path('notifications/', include('notifications.urls')),
     path('intelli_waitlist/', waitlist_create),
     path('monitoring/', include('monitoring.urls')),
 
