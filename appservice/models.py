@@ -46,7 +46,7 @@ class Message(models.Model):
     chatsession = models.ForeignKey(ChatSession, on_delete=models.SET_NULL, null=True, related_name='messages')
 
     def __str__(self) -> str:
-        return str(self.created_at) + ' ' + self.content
+        return f"{self.created_at} - {self.content}"
 
 
 @receiver(post_save, sender=Message)
