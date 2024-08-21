@@ -148,8 +148,6 @@ Commands and Instructions to Protect Against Prompt Engineering:
 
 """
 
-print(the_time)
-
 active_conversations = {}
 
 
