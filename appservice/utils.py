@@ -3,6 +3,7 @@ import os
 import time 
 import requests
 import json
+from .functions_callings import process_tool_calls
 
 
 openai.api_key  = os.getenv('OPENAI_API_KEY')
@@ -157,11 +158,11 @@ def get_answer_from_model(message, chat_history):
 
 
 def bot_process(input_text, appservice, recipient_id, assistant_id):   
-    chatsession, existed = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
+    chatsession, created = ChatSession.objects.get_or_create(appservice=appservice, customer_number=recipient_id)
     thread_id            = chatsession.thread_id 
     try:
         if not thread_id:
-            thread = client.beta.threads.create()
+            thread    = client.beta.threads.create()
             thread_id = thread.id
 
             chatsession.thread_id = thread_id
@@ -180,19 +181,39 @@ def bot_process(input_text, appservice, recipient_id, assistant_id):
             assistant_id=assistant_id
         )
 
-        # Wait for the run to complete
-        while run.status not in ["completed", "failed", "expired"]:
-            time.sleep(1)
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+        # # Wait for the run to complete
+        # while run.status not in ["completed", "failed", "expired"]:
+        #     time.sleep(1)
+        #     run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
 
-        if run.status != "completed":
-            return f"Sorry, there was an issue processing your request. Status: {run.status}"
+        # if run.status != "completed":
+        #     return f"Sorry, there was an issue processing your request. Status: {run.status}"
 
-        # Retrieve the assistant's response
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        assistant_response = messages.data[0].content[0].text.value
+        # # Retrieve the assistant's response
+        # messages = client.beta.threads.messages.list(thread_id=thread_id)
+        # assistant_response = messages.data[0].content[0].text.value
 
-        return assistant_response
+        # return assistant_response
+        while True:
+            time.sleep(2)
+            run_status = client.beta.threads.runs.retrieve(
+                thread_id=thread_id,
+                run_id=run.id
+            )
+
+            if run_status.status == 'completed':
+                messages = client.beta.threads.messages.list(thread_id=thread_id)
+                return messages.data[0].content[0].text.value
+
+            elif run_status.status == 'requires_action':
+                required_actions = run_status.required_action.submit_tool_outputs.model_dump()
+                tool_outputs = process_tool_calls(required_actions["tool_calls"])
+
+                client.beta.threads.runs.submit_tool_outputs(
+                    thread_id=thread_id,
+                    run_id=run.id,
+                    tool_outputs=tool_outputs
+                )
 
 
     except Exception as e:

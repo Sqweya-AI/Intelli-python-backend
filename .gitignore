@@ -10,10 +10,12 @@ Thumbs.db
 *data
 *data.*
 *data-*
+airports.json
+filtered_airports.json
 env
 #the text.txt file
 text.txt
-
+testtest.py
 db.json
 
 # Python

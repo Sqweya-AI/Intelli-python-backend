@@ -12,6 +12,7 @@ from .models import AppService, ChatSession, Message
 from .utils  import bot_process
 from .utils  import send_whatsapp_message
 from .utils  import check_for_escalated_events
+from .functions_callings import handle_flight_prices
 
 from business.models import Business
 from notifications.models import Notification
@@ -19,6 +20,8 @@ from notifications.models import Notification
 import os 
 import logging
 from typing import Dict, Any
+
+
 
 
 # Load environment variables
