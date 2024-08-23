@@ -195,7 +195,7 @@ def bot_process(input_text, appservice, recipient_id, assistant_id):
 
         # return assistant_response
         while True:
-            time.sleep(2)
+            time.sleep(4)
             run_status = client.beta.threads.runs.retrieve(
                 thread_id=thread_id,
                 run_id=run.id
