@@ -13,6 +13,7 @@ Thumbs.db
 airports.json
 filtered_airports.json
 env
+env_old
 #the text.txt file
 text.txt
 testtest.py
