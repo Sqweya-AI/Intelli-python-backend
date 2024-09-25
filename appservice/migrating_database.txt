@@ -1,0 +1,6 @@
+# 1. dump the database
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes --exclude admin.logentry --exclude sessions.session --indent 2 > db_dump.json
+
+2. load the database
+python manage.py loaddata db_dump.json
+
