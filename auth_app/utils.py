@@ -1,26 +1,50 @@
 # users/utils.py
-from django.core.mail import send_mail
+import resend
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+resend.api_key= os.getenv('resend_api_key')
+ 
+first_name = 'First Name'
 
 def send_reset_password_email(email, reset_token):
-    # # Implement your logic to send reset password email
-    # # This can be done using Django's send_mail function or any other email sending method
-    # # Example using Django's send_mail:
-    # subject = 'Password Reset Request'
-    # message = f'Use the following link to reset your password: /reset-password/{reset_token}'
-    # from_email = 'your@example.com'  # Change to your email address
-    # recipient_list = [email]
-    # send_mail(subject, message, from_email, recipient_list)
-    print('')
-    print(f'Password reset link has been sent to {email}.  Reset token: {reset_token}')
-    print('')
+    r = resend.Emails.send({
+    "from": "support@medivarse.com",
+    "to": email,
+    "subject": "Reset your password!",
+    "html":f'<p> Hello [{first_name}  We are sorry to hear that you have been having trouble logging in on  our Intelli Concierge.\
+          To resett your password, click the link below</p>' 
+        f'<p>https://intelli-python-backend.onrender.com/auth/reset_password/{reset_token}</p>' 
+        'You can only use this link once, not to be shared to anyone'
+        '<strong> Intelli Concierge </strong>'
+    })
 
-def send_verification_email(email, verification_token):
-    # # Implement your logic to send verification email
-    # # This can be done using Django's send_mail function or any other email sending method
-    # # Example using Django's send_mail:
-    # subject = 'Email Verification'
-    # message = f'Use the following link to verify your email: /verify-email/{verification_token}'
-    # from_email = ''your@example.com''  # Change to your email address
-    print('')
-    print(f'Confirmation  link has been sent to {email}.  With token: {verification_token}')
-    print('')
+def send_verification_email(email, verification_code):
+    r = resend.Emails.send({
+    "from": "support@medivarse.com",
+    "to": email,
+    "subject": "Verify your email!",
+    "html":f'<p>Hello {first_name}.\
+        Welcome to Intelli Concierge.\
+        To verify your account, use the code below when prompted to enter your verification code.\
+        This code is meant to not be shared to anyone'
+        f'<strong> {verification_code} </strong>'  
+        f'<strong> Intelli Concierge </strong>'  
+    })
+
+
+def send_invite_email(email, initial_password):
+    r = resend.Emails.send({
+        "from": "support@medivarse.com",
+        "to": email,
+        "subject": "You are invited to join the team",
+        "html": f'''
+            <p>Hello {first_name},</p>
+            <p>{'inviter_name'} has invited you to join the customer service team at {'company_name'}.</p>
+            <p>Your login details are below:</p>
+            <p>Email: {email}</p>
+            <p>Password: <strong>{initial_password}</strong></p>
+            <p>Welcome to <strong>Intelli Concierge</strong></p>
+        '''
+    })

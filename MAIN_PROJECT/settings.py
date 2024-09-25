@@ -2,37 +2,61 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG')
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+
+#MYSQL
+DB_ENGINE = os.getenv('DB_ENGINE')
+DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
-DEBUG = True
+DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
 
 
-# Custom mySQL 
+#POSTGRES
+POSTGRES_DB_ENGINE = os.getenv('POSTGRES_DB_ENGINE')
+POSTGRES_DB_USER = os.getenv('POSTGRES_DB_USER')
+POSTGRES_DB_PASSWORD = os.getenv('POSTGRES_DB_PASSWORD')
+POSTGRES_DB_NAME = os.getenv('POSTGRES_DB_NAME')
+POSTGRES_DB_HOST = os.getenv('POSTGRES_DB_HOST')
+POSTGRES_DB_PORT = os.getenv('POSTGRES_DB_PORT')
+POSTGRES_DOCKER_DB_HOST = os.getenv('POSTGRES_DOCKER_DB_HOST')
+
+
+#DEFAULT DB
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatbotappDB',
-        'USER': 'root',
-        'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+DATABASES['default'] = dj_database_url.parse(os.getenv("DATABASE_URL"))
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    # 'path.to.YourCustomAuthBackend',
-]
+# DATABASES
+# RENDER POSTGRESS
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
+
+
+# ALLOWED_HOSTS = ['https://intelli-python-backend.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -44,10 +68,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'main_app',
     'auth_app',
-    'bot_app'  
+    'bot_app',
+    'dashboard_app',
+    'billing_app',
+    'corsheaders',
+    'business',
+    'appservice',
+    'waitlist',
+    'notifications',
+    'channels',
+    'monitoring',
 ]
 
+
+
+# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,11 +93,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
 
 ROOT_URLCONF = 'MAIN_PROJECT.urls'
 AUTH_USER_MODEL = 'auth_app.User'
-
 
 
 TEMPLATES = [
@@ -78,7 +118,26 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'MAIN_PROJECT.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{"address": "redis://redis-10696.c12.us-east-1-4.ec2.cloud.redislabs.com:10696", "password": "kaXF1KjTJUAPRKFZExJjMrThjKKenbTt"}],
+        },
+    },
+}
+
 WSGI_APPLICATION = 'MAIN_PROJECT.wsgi.application'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # 'path.to.YourCustomAuthBackend',
+]
+
+
+EMAIL_BACKEND = 'resend.backend.ResendBackend'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -95,24 +154,106 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+STATIC_URL = '/static/'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# POSTGRES_USER=POSTGRES_DB_USER
+# POSTGRES_PASSWORD=POSTGRES_DB_PASSWORD
+# POSTGRES_DB=POSTGRES_DB_NAME
+
+
+# DATABASES
+# RENDER POSTGRESS
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'), #from render postgres
+#         conn_max_age=600
+#     )
+# }
+
+
+# #postgres-local-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
+
+
+# #postgres-docker-db
+# DATABASES = {
+#     'default': {
+#         'ENGINE': POSTGRES_DB_ENGINE,
+#         'NAME': POSTGRES_DB_NAME,
+#         'USER': POSTGRES_DB_USER,
+#         'PASSWORD' : POSTGRES_DB_PASSWORD,
+#         'HOST': POSTGRES_DOCKER_DB_HOST, 
+#         'PORT': POSTGRES_DB_PORT
+#     }
+# }
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     'http://*',
+#     'https://*',
+# ]
+# Allow all origins
 
 
 # STORE
 # REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    
+# }
+
+# REST_FRAME = {
+#     # ... other settings
+#     'DEFAULT_RENDERER_CLASSES': [
+#         'rest_framework.renderers.JSONRenderer',
+#     ],
+#     'DEFAULT_PARSER_CLASSES': [
+#         'rest_framework.parsers.JSONParser',
 #     ],
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.IsAuthenticated',
 #     ],
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#     ],
+#     'EXCEPTION_HANDLER': 'yourapp.exception_handler.custom_exception_handler',  # Optional: Custom exception handler (replace 'yourapp' with your app name)
 # }
+
 
 # emailing/ no env variables yet
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -123,12 +264,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxxxxx!'
 
 
+# # Custom mySQL 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'chatbotappDB',
+#         'USER': 'root',
+#         'PASSWORD': DB_PASSWORD,
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
+
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'chatbotappDB',
+#         'NAME': 'IntelliPostgresDB',
 #         'USER':'postgres',
-#         'PASSWORD' : '1111',
+#         'PASSWORD' : 'abcd',
 #         'HOST':'localhost',
 #         'PORT': 5432
 #     }

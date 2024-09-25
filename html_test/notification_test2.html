@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket with Django Channels</title>
+</head>
+
+<body>
+    <h1>WebSocket with Django Channels</h1>
+    <div id="events"></div>
+    <script>
+        class WhatsAppNotificationManager {
+            constructor(phoneNumber) {
+                this.phoneNumber = phoneNumber;
+                this.socket = null;
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                this.reconnectDelay = 5000; // 5 seconds
+            }
+
+            connect() {
+                // Assurez-vous de remplacer 'your-server-url' par l'URL réelle de votre serveur
+                this.socket = new WebSocket(`wss://intelli-python-backend-lxui.onrender.com/ws/events/${this.phoneNumber}/`);
+
+                this.socket.onopen = () => {
+                    console.log('WebSocket connection established');
+                    this.reconnectAttempts = 0;
+                };
+
+                this.socket.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    this.handleNotification(data);
+                };
+
+                this.socket.onclose = (event) => {
+                    console.log('WebSocket connection closed:', event.reason);
+                    this.attemptReconnect();
+                };
+
+                this.socket.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+            }
+
+            handleNotification(data) {
+                console.log('Received notification:', data);
+                // Ici, vous pouvez implémenter la logique pour afficher la notification
+                // Par exemple, mettre à jour l'interface utilisateur, afficher une alerte, etc.
+            }
+
+            attemptReconnect() {
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    this.reconnectAttempts++;
+                    console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+                    setTimeout(() => this.connect(), this.reconnectDelay);
+                } else {
+                    console.log('Max reconnect attempts reached. Please refresh the page.');
+                }
+            }
+
+            disconnect() {
+                if (this.socket) {
+                    this.socket.close();
+                }
+            }
+        }
+
+        // Utilisation :
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remplacez '1234567890' par le numéro de téléphone réel du client WhatsApp
+            const phoneNumber = '233553221408';
+            const notificationManager = new WhatsAppNotificationManager(phoneNumber);
+            notificationManager.connect();
+
+            // Assurez-vous de déconnecter lorsque la page est fermée
+            window.addEventListener('beforeunload', () => {
+                notificationManager.disconnect();
+            });
+        });
+    </script>
+</body>
+
+</html>

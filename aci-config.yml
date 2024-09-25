@@ -1,0 +1,47 @@
+# aci-config.yml
+apiVersion: '2021-03-01' #not sure about this
+location: eastus
+name: intelli-aci-group 
+properties:
+  containers:
+    - name: intelli-backend
+      properties:
+        image: intelliappregistry.azurecr.io/intelli_backend_image:latest
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGb: 1.5
+        ports:
+          - port: 80
+            protocol: TCP
+          - port: 8000
+            protocol: TCP
+    - name: postgres-db
+      properties:
+        image: intelliappregistry.azurecr.io/postgres:latest
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGb: 1.5
+        ports:
+          - port: 5432
+            protocol: TCP
+    - name: pgadmin-container
+      properties:
+        image: intelliappregistry.azurecr.io/dpage/pgadmin:latest
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGb: 1.5
+        ports:
+          - port: 5050
+            protocol: TCP
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    ports:
+      - protocol: tcp
+        port: 80
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
