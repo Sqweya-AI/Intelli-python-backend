@@ -14,7 +14,6 @@ ASSISTANT_ID   = config('FLIGHT_ASSISTANT_ID')
 OPENAI_API_KEY = config('OPENAI_API_KEY')
 
 
-
 client    = OpenAI(api_key=OPENAI_API_KEY)
 assistant = client.beta.assistants.retrieve(assistant_id=ASSISTANT_ID)
 

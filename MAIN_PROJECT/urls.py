@@ -15,5 +15,6 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('intelli_waitlist/', waitlist_create),
     path('monitoring/', include('monitoring.urls')),
+    path('blog/', include('blog.urls')),
 
 ]

@@ -22,15 +22,8 @@ import logging
 from typing import Dict, Any
 
 
-
-
 # Load environment variables
-ACCESS_TOKEN    = os.getenv("ACCESS_TOKEN")
-VERSION         = os.getenv("VERSION")
-PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
 VERIFY_TOKEN    = os.getenv("VERIFY_TOKEN")
-ASSISTANT_ID    = os.getenv("ASSISTANT_ID")
 
 
 logger = logging.getLogger(__name__)

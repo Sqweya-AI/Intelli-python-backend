@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'notifications',
     'channels',
     'monitoring',
+    'blog',
 ]
 
 
