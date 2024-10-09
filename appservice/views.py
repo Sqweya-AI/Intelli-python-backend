@@ -114,15 +114,15 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
     )
 
     # check for escalated events 
-    # events = check_for_escalated_events(data['content'])
-    # logger.info(events)
-    # if len(events.get('escalated_events', [])) !=0 or events != {}:
-    #     notif                  = events 
-    #     notif['chatsession']   = chatsession
-    #     notif['channel']       = 'whatsapp'
-    #     notif['connection_id'] = chatsession.appservice.phone_number
-    #     notification           = Notification.objects.create(**notif)
-    #     notification.save()
+    events = check_for_escalated_events(data['content'])
+    logger.info(events)
+    if len(events.get('escalated_events', [])) !=0 or events != {}:
+        notif                  = events 
+        notif['chatsession']   = chatsession
+        notif['channel']       = 'whatsapp'
+        notif['connection_id'] = chatsession.appservice.phone_number
+        notification           = Notification.objects.create(**notif)
+        notification.save()
     return JsonResponse({'result': answer}, status=status.HTTP_200_OK)
 
 

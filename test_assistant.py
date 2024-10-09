@@ -95,11 +95,16 @@ Additional instructions:
 Your goal is to provide accurate and nuanced sentiment analysis for each message, helping to understand the emotional context of customer communications.
 """
 
-assistant = client.beta.assistants.create(
-    model='gpt-4o',
-    instructions=instructions,
-    name='intelli sentiment analyzer',
-)
+# assistant = client.beta.assistants.create(
+#     model='gpt-4o',
+#     instructions=instructions,
+#     name='intelli sentiment analyzer',
+# )
+
+
+assistant = client.beta.assistants.retrieve(assistant_id='')
+
+
 
 print(assistant)
 print(assistant.id)
