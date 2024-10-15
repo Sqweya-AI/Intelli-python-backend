@@ -97,3 +97,6 @@ test_debug.py
 */migrations/*.py
 */migrations/*.pyc
 */__pycache__/*
+
+.env_old/
+.gitignore
