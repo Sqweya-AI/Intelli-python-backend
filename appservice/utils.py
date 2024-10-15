@@ -203,11 +203,14 @@ def bot_process(input_text, appservice, recipient_id, assistant_id):
 
             if run_status.status == 'completed':
                 messages = client.beta.threads.messages.list(thread_id=thread_id)
+                print(messages.data[0].content[0].text.value)
                 return messages.data[0].content[0].text.value
 
             elif run_status.status == 'requires_action':
                 required_actions = run_status.required_action.submit_tool_outputs.model_dump()
                 tool_outputs = process_tool_calls(required_actions["tool_calls"])
+
+                print('fucntion calling in action___________________')
 
                 client.beta.threads.runs.submit_tool_outputs(
                     thread_id=thread_id,

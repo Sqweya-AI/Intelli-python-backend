@@ -108,6 +108,7 @@ def get_flight_offers(origin, destination, date):
 
 
 def process_tool_calls(tool_calls: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    print('the tools are being used')
     tool_outputs = []
     for action in tool_calls:
         func_name = action['function']['name']
