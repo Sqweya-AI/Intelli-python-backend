@@ -231,6 +231,8 @@ def sentiment_analysis(chat_history, recipient_id):
 
 
 def send_whatsapp_message(data):
+    print(data)
+
     recipient = data.get("recipient")
     text = data.get("text")
     phone_number_id = data.get('phone_number_id')
