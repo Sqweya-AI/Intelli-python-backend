@@ -97,6 +97,7 @@ def handle_whatsapp_message(data: Dict[str, Any]) -> JsonResponse:
             assistant_id=appservice.assistant_id
         )
 
+        print('reponse du bot_________________________________')
         print(answer)
     else:
         answer = 'Please wait for our response..'
