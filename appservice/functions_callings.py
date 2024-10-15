@@ -114,6 +114,9 @@ def process_tool_calls(tool_calls: List[Dict[str, Any]]) -> List[Dict[str, Any]]
         func_name = action['function']['name']
         arguments = json.loads(action['function']['arguments'])
 
+        print('argumetnsssssssssssssssssssssssss')
+        print(arguments)
+
         if func_name == "get_flights_prices":
             output = get_flights_prices(
                 origin=arguments['origin'],
@@ -126,6 +129,9 @@ def process_tool_calls(tool_calls: List[Dict[str, Any]]) -> List[Dict[str, Any]]
             })
         else:
             raise ValueError(f"Unknown function: {func_name}")
+        
+        print('tools outputs_____________________________________')
+        print(tool_outputs)
 
     return tool_outputs
 
